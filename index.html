@@ -301,6 +301,8 @@
       .page-nav { display: flex; gap: 6px; justify-content: center; }
       .page-nav[hidden] { display: none; }
       .page-nav .chip[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+      .check-row { display: flex; gap: 8px; align-items: center; font-size: .85rem; font-weight: 500; color: var(--ink-2); cursor: pointer; }
+      .check-row input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-color: var(--accent); cursor: pointer; }
     </style>
   </head>
   <body>
@@ -359,6 +361,10 @@
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="4" y="2" width="18" height="22" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="15" y="5" width="5" height="6" fill="none" stroke="currentColor" stroke-width="1"/><path d="M7 8h5M7 13h12M7 17h12M7 21h12" stroke="currentColor" stroke-width="1"/></svg>
               <span data-i18n="typeRirekisho">Rirekisho</span>
             </button>
+            <button type="button" data-type="monthly" aria-pressed="false">
+              <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="2" y="4" width="22" height="20" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2 10h22M8.5 4v20M15 4v20M21.5 4v20" stroke="currentColor" stroke-width="0.8"/></svg>
+              <span data-i18n="typeMonthly">Monthly</span>
+            </button>
           </div>
         </div>
 
@@ -378,6 +384,8 @@
                 <option value="a5">A5 — 148 × 210 mm</option>
                 <option value="b5">B5 (JIS) — 182 × 257 mm</option>
                 <option value="b4">B4 (JIS) — 257 × 364 mm</option>
+                <option value="bible">Bible refill — 95 × 170 mm</option>
+                <option value="mini6">Mini 6 refill — 80 × 126 mm</option>
               </select>
             </div>
             <div>
@@ -388,6 +396,27 @@
               </select>
             </div>
           </div>
+          <label class="check-row">
+            <input type="checkbox" id="holes" />
+            <span data-i18n="holesLabel">Binder punch-hole guides (A5 / Bible / Mini 6)</span>
+          </label>
+        </div>
+
+        <div class="group" id="month-group" hidden>
+          <span class="glabel" data-i18n="monthLabel">Month</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <select id="year" aria-label="Year">
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+            </select>
+            <select id="month" aria-label="Month"></select>
+          </div>
+          <select id="weekstart" aria-label="Week starts on">
+            <option value="0" data-i18n="wsSun">Sunday start</option>
+            <option value="1" data-i18n="wsMon">Monday start</option>
+          </select>
         </div>
 
         <div class="group">
@@ -476,8 +505,12 @@
           letter: { name: "Letter", w: 215.9, h: 279.4 },
           a5:     { name: "A5",     w: 148,   h: 210   },
           b5:     { name: "B5",     w: 182,   h: 257   },
-          b4:     { name: "B4",     w: 257,   h: 364   }
+          b4:     { name: "B4",     w: 257,   h: 364   },
+          bible:  { name: "Bible",  w: 95,    h: 170   },
+          mini6:  { name: "Mini 6", w: 80,    h: 126   }
         };
+
+        var MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
         var PRESETS = {
           graph: [
@@ -525,6 +558,10 @@
           rirekisho: [
             { label: "A4 standard", size: "a4", spacing: 5, weight: 0.25, color: "#3c424c" },
             { label: "B5 standard", size: "b5", spacing: 5, weight: 0.25, color: "#3c424c" }
+          ],
+          monthly: [
+            { label: "Sunday start", weekStart: 0, spacing: 5, weight: 0.25, color: "#b7bdc7" },
+            { label: "Monday start", weekStart: 1, spacing: 5, weight: 0.25, color: "#b7bdc7" }
           ]
         };
 
@@ -532,7 +569,7 @@
           graph: "Grid spacing", dot: "Dot spacing", lined: "Line spacing",
           iso: "Triangle size", hex: "Hex size", handwriting: "Line height",
           music: "Staff height", cornell: "Line spacing", genkou: "Cell size",
-          rirekisho: "Form layout (fixed)"
+          rirekisho: "Form layout (fixed)", monthly: "Calendar layout (fixed)"
         };
         var SPACING_RANGE = {
           graph: { min: 2, max: 20 },
@@ -544,7 +581,8 @@
           music: { min: 6, max: 16 },
           cornell: { min: 4, max: 25 },
           genkou: { min: 7, max: 15 },
-          rirekisho: { min: 2, max: 20 }
+          rirekisho: { min: 2, max: 20 },
+          monthly: { min: 2, max: 20 }
         };
         var TYPE_DEFAULT_SPACING = { iso: 6, hex: 8, handwriting: 14, music: 10, cornell: 7, genkou: 9.5 };
 
@@ -552,7 +590,7 @@
           graph: "マス目の間隔", dot: "ドットの間隔", lined: "罫線の間隔",
           iso: "三角のサイズ", hex: "六角形のサイズ", handwriting: "行の高さ",
           music: "五線の高さ", cornell: "罫線の間隔", genkou: "マスのサイズ",
-          rirekisho: "定型レイアウト（固定）"
+          rirekisho: "定型レイアウト（固定）", monthly: "カレンダー（固定）"
         };
 
         var PRESET_JA = {
@@ -565,7 +603,8 @@
           "Standard staff": "標準の五線", "Large staff": "大きい五線", "Small staff": "小さい五線",
           "Wide ruled 9 mm": "広い罫線 9 mm",
           "400字 · A4 standard": "400字詰め（A4標準）", "Large cells 12 mm": "大きいマス 12 mm", "Fine cells 8 mm": "細かいマス 8 mm",
-          "A4 standard": "A4 標準", "B5 standard": "B5 標準"
+          "A4 standard": "A4 標準", "B5 standard": "B5 標準",
+          "Sunday start": "日曜始まり", "Monday start": "月曜始まり"
         };
 
         var STR = {
@@ -579,8 +618,10 @@
             margin: "Margin", weight: "Line weight", color: "Line colour", custom: "Custom", download: "Download PDF",
             hint: "The PDF is generated on your device at 300 DPI with exact millimetre geometry. When printing, choose <strong>Actual size / 100%</strong> — not “Fit to page” — so the grid stays true to scale.",
             typeGraph: "Graph", typeDot: "Dot grid", typeLined: "Lined", typeIso: "Isometric", typeHex: "Hex",
-            typeWriting: "Writing", typeMusic: "Music", typeCornell: "Cornell", typeGenkou: "Genkō", typeRirekisho: "Rirekisho",
+            typeWriting: "Writing", typeMusic: "Music", typeCornell: "Cornell", typeGenkou: "Genkō", typeRirekisho: "Rirekisho", typeMonthly: "Monthly",
             page1: "Page 1", page2: "Page 2",
+            monthLabel: "Month", wsSun: "Sunday start", wsMon: "Monday start",
+            holesLabel: "Binder punch-hole guides (A5 / Bible / Mini 6)",
             sw1: "Light grey", sw2: "Grey", sw3: "Dark grey", sw4: "Light blue", sw5: "Blue",
             specTpl: "{name} · {w} × {h} mm · margin {m} mm",
             zoomTpl: "preview at {p}% of true size",
@@ -594,6 +635,7 @@
             detailCornell: "Cornell layout: cue column on the left, ruled notes, and a summary box at the bottom.",
             detailGenkou: "Genkō yōshi manuscript paper: {c} × {c} = {n} characters, cells {cell} mm.",
             detailRirekisho: "Japanese résumé form (rirekisho), two pages: personal details and education on page 1; work history, licences and self-PR on page 2.",
+            detailMonthly: "{y}/{m} calendar — Sundays and Japanese national holidays in red.",
             detailSuffix: " The PDF prints at exactly these measurements.",
             statusBuilding: "Building your PDF…",
             statusPdf: "PDF downloaded — print it at Actual size / 100% so the {s} mm spacing stays exact.",
@@ -610,8 +652,10 @@
             margin: "余白", weight: "線の太さ", color: "線の色", custom: "カスタム", download: "PDFをダウンロード",
             hint: "PDFはお使いの端末で300 DPI・正確なミリ単位で生成されます。印刷のときは<strong>「実際のサイズ / 100%」</strong>を選んでください。「用紙に合わせる」だと縮小されてしまいます。",
             typeGraph: "方眼", typeDot: "ドット", typeLined: "罫線", typeIso: "アイソメ", typeHex: "六角形",
-            typeWriting: "書写", typeMusic: "五線譜", typeCornell: "コーネル", typeGenkou: "原稿", typeRirekisho: "履歴書",
+            typeWriting: "書写", typeMusic: "五線譜", typeCornell: "コーネル", typeGenkou: "原稿", typeRirekisho: "履歴書", typeMonthly: "マンスリー",
             page1: "1枚目", page2: "2枚目",
+            monthLabel: "年月", wsSun: "日曜始まり", wsMon: "月曜始まり",
+            holesLabel: "バインダー穴ガイド（A5・バイブル・ミニ6）",
             sw1: "薄いグレー", sw2: "グレー", sw3: "濃いグレー", sw4: "薄い青", sw5: "青",
             specTpl: "{name} · {w} × {h} mm · 余白 {m} mm",
             zoomTpl: "実寸の {p}% で表示中",
@@ -625,6 +669,7 @@
             detailCornell: "コーネル式レイアウト：左にキーワード欄、右にノート欄、下にまとめ欄。",
             detailGenkou: "原稿用紙：{c} × {c} ＝ {n} 字詰め、マスは {cell} mm。",
             detailRirekisho: "履歴書：2ページ構成（1ページ目に個人情報と学歴、2ページ目に職歴・免許・資格・自己PR）。",
+            detailMonthly: "{y}年{m}月のカレンダー — 日曜と祝日は赤字です。",
             detailSuffix: " PDFはこの寸法どおりに印刷されます。",
             statusBuilding: "PDFを作成中…",
             statusPdf: "PDFをダウンロードしました — {s} mm の間隔を正確に保つため、「実際のサイズ（100%）」で印刷してください。",
@@ -646,6 +691,10 @@
             return (navigator.language || "en").indexOf("ja") === 0 ? "ja" : "en";
           })(),
           page: 0,
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
+          weekStart: 0,
+          holes: false,
           type: "graph",
           size: "a4",
           orient: "portrait",
@@ -668,6 +717,134 @@
           return (Math.round(n * 10) / 10).toString().replace(/\.0$/, "");
         }
 
+
+
+        /* ---------- Japanese national holidays (祝日法 rules) ---------- */
+        function jpHolidays(year) {
+          var H = {};
+          function add(mo, d, name) { H[mo + "-" + d] = name; }
+          function nthMonday(mo, n) {
+            var dow = new Date(year, mo - 1, 1).getDay();
+            return 1 + ((8 - dow) % 7) + (n - 1) * 7;
+          }
+          add(1, 1, "元日"); add(1, nthMonday(1, 2), "成人の日");
+          add(2, 11, "建国記念の日"); add(2, 23, "天皇誕生日");
+          add(3, Math.floor(20.8431 + 0.242194 * (year - 1980)) - Math.floor((year - 1980) / 4), "春分の日");
+          add(4, 29, "昭和の日");
+          add(5, 3, "憲法記念日"); add(5, 4, "みどりの日"); add(5, 5, "こどもの日");
+          add(7, nthMonday(7, 3), "海の日");
+          add(8, 11, "山の日");
+          add(9, nthMonday(9, 3), "敬老の日");
+          add(9, Math.floor(23.2488 + 0.242194 * (year - 1980)) - Math.floor((year - 1980) / 4), "秋分の日");
+          add(10, nthMonday(10, 2), "スポーツの日");
+          add(11, 3, "文化の日"); add(11, 23, "勤労感謝の日");
+          function has(mo, d) { return !!H[mo + "-" + d]; }
+          var t, mo2, dd;
+          for (t = new Date(year, 0, 2); t <= new Date(year, 11, 30); t.setDate(t.getDate() + 1)) {
+            mo2 = t.getMonth() + 1; dd = t.getDate();
+            var dw = t.getDay();
+            if (dw === 0 || dw === 6 || has(mo2, dd)) continue;
+            var pv = new Date(t.getTime() - 86400000), nx = new Date(t.getTime() + 86400000);
+            if (has(pv.getMonth() + 1, pv.getDate()) && has(nx.getMonth() + 1, nx.getDate())) add(mo2, dd, "国民の休日");
+          }
+          var keys = Object.keys(H);
+          for (var i = 0; i < keys.length; i++) {
+            var parts = keys[i].split("-");
+            var hd = new Date(year, +parts[0] - 1, +parts[1]);
+            if (hd.getDay() !== 0) continue;
+            var nxd = new Date(hd.getTime() + 86400000);
+            while (nxd.getFullYear() === year && has(nxd.getMonth() + 1, nxd.getDate())) nxd.setDate(nxd.getDate() + 1);
+            if (nxd.getFullYear() === year) add(nxd.getMonth() + 1, nxd.getDate(), "振替休日");
+          }
+          return H;
+        }
+
+        /* ---------- binder punch-hole guides (PLUS PU-601 standard) ---------- */
+        function drawHoles(c, wMM, hMM) {
+          var SPECS = { a5: [19, 19, 70, 19, 19], bible: [19, 19, 51, 19, 19], mini6: [19, 19, 19, 19, 19] };
+          var gaps = SPECS[state.size];
+          if (!state.holes || !gaps) return;
+          var span = 0, i;
+          for (i = 0; i < gaps.length; i++) span += gaps[i];
+          var y = (hMM - span) / 2;
+          var hx = 6.75; /* hole centre depth, standard 6.75 mm */
+          c.strokeStyle = state.color;
+          c.fillStyle = state.color;
+          c.lineWidth = Math.max(0.2, state.weight);
+          function hole(cy) {
+            c.beginPath(); c.arc(hx, cy, 2.75, 0, Math.PI * 2); c.stroke();
+            c.beginPath(); c.arc(hx, cy, 0.45, 0, Math.PI * 2); c.fill();
+          }
+          hole(y);
+          for (i = 0; i < gaps.length; i++) { y += gaps[i]; hole(y); }
+        }
+
+        /* ---------- monthly calendar with JP holidays ---------- */
+        function drawMonthly(c, wMM, hMM) {
+          var m = state.margin;
+          var x0 = m, x1 = wMM - m, y0 = m, y1 = hMM - m;
+          if (x1 <= x0 || y1 <= y0) return;
+          var W = x1 - x0;
+          var yr = state.year, mo = state.month;
+          var HOLS = jpHolidays(yr);
+          var ink = "#333740", RED = "#cf3527", BLUE = "#2f6fd0", FAINT = "#b9bec7";
+          function txt(str, x, y, size, align, bold, color) {
+            c.font = (bold ? "600 " : "400 ") + size + "px " + JP_FONT;
+            c.textAlign = align || "left";
+            c.textBaseline = "middle";
+            c.fillStyle = color || ink;
+            c.fillText(str, x, y);
+          }
+          var title = state.lang === "ja" ? (yr + "年 " + mo + "月") : (MONTHS_EN[mo - 1] + " " + yr);
+          txt(title, x0 + 1, y0 + 5, Math.min(8, Math.max(4.5, W / 11)), "left", true);
+          var headH = 6, gy0 = y0 + 13 + headH;
+          var wdJP = ["日", "月", "火", "水", "木", "金", "土"];
+          var wdEN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+          var cellW = W / 7, i;
+          for (i = 0; i < 7; i++) {
+            var dowH = (state.weekStart + i) % 7;
+            txt(state.lang === "ja" ? wdJP[dowH] : wdEN[dowH], x0 + cellW * i + cellW / 2, y0 + 13 + headH / 2, 3, "center", true, dowH === 0 ? RED : dowH === 6 ? BLUE : ink);
+          }
+          var offset = (new Date(yr, mo - 1, 1).getDay() - state.weekStart + 7) % 7;
+          var dim = new Date(yr, mo, 0).getDate();
+          var prevDim = new Date(yr, mo - 1, 0).getDate();
+          var weeks = Math.ceil((offset + dim) / 7);
+          var memoH = weeks < 6 ? 15 : 0;
+          var gridH = (y1 - gy0) - memoH;
+          var cellH = gridH / weeks;
+          c.strokeStyle = state.color;
+          c.lineWidth = state.weight;
+          c.beginPath();
+          for (i = 0; i <= 7; i++) { var X = x0 + i * cellW; c.moveTo(X, gy0); c.lineTo(X, gy0 + gridH); }
+          for (i = 0; i <= weeks; i++) { var Y = gy0 + i * cellH; c.moveTo(x0, Y); c.lineTo(x1, Y); }
+          c.stroke();
+          c.lineWidth = state.weight * 1.6;
+          c.strokeRect(x0, gy0, W, gridH);
+          for (var idx = 0; idx < weeks * 7; idx++) {
+            var dnum = idx - offset + 1;
+            var inMonth = dnum >= 1 && dnum <= dim;
+            var disp = inMonth ? dnum : (dnum < 1 ? prevDim + dnum : dnum - dim);
+            var cx = x0 + (idx % 7) * cellW, cyy = gy0 + Math.floor(idx / 7) * cellH;
+            var dow2 = (state.weekStart + (idx % 7)) % 7;
+            var hol = inMonth ? HOLS[mo + "-" + dnum] : null;
+            var col = !inMonth ? FAINT : (hol || dow2 === 0) ? RED : dow2 === 6 ? BLUE : ink;
+            txt(String(disp), cx + 1.4, cyy + 2.9, 3.1, "left", inMonth, col);
+            if (hol) {
+              var nm = hol, maxCh = Math.max(2, Math.floor(cellW / 2.1));
+              if (nm.length > maxCh) nm = nm.slice(0, maxCh);
+              txt(nm, cx + 1.4, cyy + 6.6, 1.9, "left", false, RED);
+            }
+          }
+          if (memoH > 0) {
+            var my = gy0 + gridH + 3;
+            txt(state.lang === "ja" ? "メモ" : "Notes", x0 + 1, my + 2, 2.6, "left", true);
+            c.strokeStyle = state.color;
+            c.lineWidth = state.weight;
+            c.beginPath();
+            for (var ly = my + 7; ly < y1 - 1; ly += 6) { c.moveTo(x0, ly); c.lineTo(x1, ly); }
+            c.stroke();
+          }
+        }
 
         /* ---------- rirekisho: JIS-style resume form, 2 pages ---------- */
         function drawRirekisho(c, wMM, hMM, page) {
@@ -804,6 +981,7 @@
           if (x1 <= x0 || y1 <= y0) return;
 
           if (state.type === "rirekisho") { drawRirekisho(c, wMM, hMM, page || 0); return; }
+          if (state.type === "monthly") { drawMonthly(c, wMM, hMM); drawHoles(c, wMM, hMM); return; }
 
           if (state.type === "graph") {
             c.lineWidth = state.weight;
@@ -927,6 +1105,8 @@
             c.moveTo(x0, divY); c.lineTo(x1, divY);
             c.stroke();
           }
+
+          drawHoles(c, wMM, hMM);
         }
 
         /* ---------- preview ---------- */
@@ -974,6 +1154,7 @@
             var colsG2 = Math.max(4, Math.floor(innerW / state.spacing + 0.001));
             detail = fill(L.detailGenkou, { c: colsG2, n: colsG2 * colsG2, cell: fmt(innerW / colsG2) });
           } else if (state.type === "rirekisho") detail = L.detailRirekisho;
+          else if (state.type === "monthly") detail = fill(L.detailMonthly, { y: state.year, m: state.month });
           else detail = L.detailCornell;
           $("detail").textContent = detail + L.detailSuffix;
         }
@@ -998,6 +1179,7 @@
         }
 
         function fileBase() {
+          if (state.type === "monthly") return "calendar-" + state.year + "-" + (state.month < 10 ? "0" : "") + state.month;
           var names = {
             graph: "graph-paper", dot: "dot-grid", lined: "lined-paper",
             iso: "isometric-paper", hex: "hex-paper", handwriting: "handwriting-paper",
@@ -1077,6 +1259,7 @@
             b.textContent = (state.lang === "ja" && PRESET_JA[p.label]) ? PRESET_JA[p.label] : p.label;
             b.addEventListener("click", function () {
               if (p.size) { state.size = p.size; $("size").value = p.size; }
+              if (p.weekStart !== undefined) { state.weekStart = p.weekStart; $("weekstart").value = p.weekStart; }
               state.spacing = p.spacing;
               state.weight = p.weight;
               state.color = p.color;
@@ -1090,8 +1273,10 @@
         function setType(t) {
           state.type = t;
           state.page = 0;
-          $("spacing").disabled = (t === "rirekisho");
-          $("spacing-num").disabled = (t === "rirekisho");
+          var fixedLayout = (t === "rirekisho" || t === "monthly");
+          $("spacing").disabled = fixedLayout;
+          $("spacing-num").disabled = fixedLayout;
+          $("month-group").hidden = (t !== "monthly");
           var btns = document.querySelectorAll(".seg button");
           for (var i = 0; i < btns.length; i++) {
             btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-type") === t ? "true" : "false");
@@ -1163,6 +1348,23 @@
           resizeTimer = setTimeout(renderPreview, 120);
         });
 
+        function buildMonthOptions() {
+          var sel = $("month");
+          sel.innerHTML = "";
+          for (var i = 1; i <= 12; i++) {
+            var o = document.createElement("option");
+            o.value = i;
+            o.textContent = state.lang === "ja" ? (i + "月") : MONTHS_EN[i - 1];
+            sel.appendChild(o);
+          }
+          sel.value = state.month;
+        }
+
+        $("year").addEventListener("change", function () { state.year = parseInt(this.value, 10); renderPreview(); });
+        $("month").addEventListener("change", function () { state.month = parseInt(this.value, 10); renderPreview(); });
+        $("weekstart").addEventListener("change", function () { state.weekStart = parseInt(this.value, 10); renderPreview(); });
+        $("holes").addEventListener("change", function () { state.holes = this.checked; renderPreview(); });
+
         document.querySelectorAll("#page-nav .chip").forEach(function (ch) {
           ch.addEventListener("click", function () {
             state.page = parseInt(ch.getAttribute("data-page"), 10);
@@ -1192,6 +1394,7 @@
           $("lang-en").setAttribute("aria-pressed", state.lang === "en" ? "true" : "false");
           $("lang-ja").setAttribute("aria-pressed", state.lang === "ja" ? "true" : "false");
           $("spacing-label").textContent = (state.lang === "ja" ? SPACING_LABELS_JA : SPACING_LABELS)[state.type];
+          buildMonthOptions();
           buildPresets();
           renderPreview();
         }
@@ -1206,6 +1409,8 @@
         $("lang-en").addEventListener("click", function () { setLang("en"); });
         $("lang-ja").addEventListener("click", function () { setLang("ja"); });
 
+        $("year").value = state.year;
+        buildMonthOptions();
         syncControls();
         applyLang();
       })();
