@@ -467,6 +467,32 @@
           </div>
         </div>
 
+        <div class="group" id="text-group">
+          <span class="glabel" data-i18n="textGroup">Your text</span>
+          <div>
+            <label class="field-label" for="custom-text" data-i18n="textLabel">Text</label>
+            <input type="text" id="custom-text" maxlength="60" autocomplete="off" />
+          </div>
+          <div>
+            <label class="field-label" for="text-pos" data-i18n="textPosLabel">Position</label>
+            <select id="text-pos">
+              <option value="top-left" data-i18n="posTL">Top left</option>
+              <option value="top-center" data-i18n="posTC">Top centre</option>
+              <option value="top-right" data-i18n="posTR">Top right</option>
+              <option value="bottom-left" data-i18n="posBL">Bottom left</option>
+              <option value="bottom-center" data-i18n="posBC" selected>Bottom centre</option>
+              <option value="bottom-right" data-i18n="posBR">Bottom right</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="text-size"><span data-i18n="textSizeLabel">Text size</span> <span class="unit">mm</span></label>
+            <div class="slider-row">
+              <input type="range" id="text-size" min="2" max="8" step="0.5" value="4" />
+              <input type="number" id="text-size-num" min="2" max="8" step="0.5" value="4" />
+            </div>
+          </div>
+        </div>
+
         <div class="actions">
           <button type="button" class="btn btn-primary" id="download">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6.5 10.5 5.5 5.5 5.5-5.5"/><path d="M4 20h16"/></svg>
@@ -622,6 +648,9 @@
             page1: "Page 1", page2: "Page 2",
             monthLabel: "Month", wsSun: "Sunday start", wsMon: "Monday start",
             holesLabel: "Binder punch-hole guides (A5 / Bible / Mini 6)",
+            textGroup: "Your text", textLabel: "Text", textPh: "Your name, a title, anything",
+            textPosLabel: "Position", posTL: "Top left", posTC: "Top centre", posTR: "Top right",
+            posBL: "Bottom left", posBC: "Bottom centre", posBR: "Bottom right", textSizeLabel: "Text size",
             sw1: "Light grey", sw2: "Grey", sw3: "Dark grey", sw4: "Light blue", sw5: "Blue",
             specTpl: "{name} · {w} × {h} mm · margin {m} mm",
             zoomTpl: "preview at {p}% of true size",
@@ -656,6 +685,9 @@
             page1: "1枚目", page2: "2枚目",
             monthLabel: "年月", wsSun: "日曜始まり", wsMon: "月曜始まり",
             holesLabel: "バインダー穴ガイド（A5・バイブル・ミニ6）",
+            textGroup: "テキスト", textLabel: "文字", textPh: "名前やタイトルなど",
+            textPosLabel: "位置", posTL: "左上", posTC: "上・中央", posTR: "右上",
+            posBL: "左下", posBC: "下・中央", posBR: "右下", textSizeLabel: "文字サイズ",
             sw1: "薄いグレー", sw2: "グレー", sw3: "濃いグレー", sw4: "薄い青", sw5: "青",
             specTpl: "{name} · {w} × {h} mm · 余白 {m} mm",
             zoomTpl: "実寸の {p}% で表示中",
@@ -695,6 +727,9 @@
           month: new Date().getMonth() + 1,
           weekStart: 0,
           holes: false,
+          customText: "",
+          textPos: "bottom-center",
+          textSize: 4,
           type: "graph",
           size: "a4",
           orient: "portrait",
@@ -846,6 +881,26 @@
           }
         }
 
+        /* ---------- user text overlay (name / title stamp) ---------- */
+        function drawCustomText(c, wMM, hMM) {
+          var s = (state.customText || "").trim();
+          if (!s) return;
+          var m = state.margin;
+          var edge = Math.max(4, m);
+          var band = Math.max(3.5, m / 2);
+          var pos = state.textPos;
+          var x, align;
+          if (pos.indexOf("left") >= 0) { x = edge; align = "left"; }
+          else if (pos.indexOf("right") >= 0) { x = wMM - edge; align = "right"; }
+          else { x = wMM / 2; align = "center"; }
+          var y = pos.indexOf("top") === 0 ? band : hMM - band;
+          c.font = "600 " + state.textSize + "px " + JP_FONT;
+          c.textAlign = align;
+          c.textBaseline = "middle";
+          c.fillStyle = "#333740";
+          c.fillText(s, x, y);
+        }
+
         /* ---------- rirekisho: JIS-style resume form, 2 pages ---------- */
         function drawRirekisho(c, wMM, hMM, page) {
           var m = state.margin;
@@ -980,8 +1035,8 @@
           var x0 = m, x1 = wMM - m, y0 = m, y1 = hMM - m;
           if (x1 <= x0 || y1 <= y0) return;
 
-          if (state.type === "rirekisho") { drawRirekisho(c, wMM, hMM, page || 0); return; }
-          if (state.type === "monthly") { drawMonthly(c, wMM, hMM); drawHoles(c, wMM, hMM); return; }
+          if (state.type === "rirekisho") { drawRirekisho(c, wMM, hMM, page || 0); drawCustomText(c, wMM, hMM); return; }
+          if (state.type === "monthly") { drawMonthly(c, wMM, hMM); drawHoles(c, wMM, hMM); drawCustomText(c, wMM, hMM); return; }
 
           if (state.type === "graph") {
             c.lineWidth = state.weight;
@@ -1107,6 +1162,7 @@
           }
 
           drawHoles(c, wMM, hMM);
+          drawCustomText(c, wMM, hMM);
         }
 
         /* ---------- preview ---------- */
@@ -1364,6 +1420,13 @@
         $("month").addEventListener("change", function () { state.month = parseInt(this.value, 10); renderPreview(); });
         $("weekstart").addEventListener("change", function () { state.weekStart = parseInt(this.value, 10); renderPreview(); });
         $("holes").addEventListener("change", function () { state.holes = this.checked; renderPreview(); });
+        $("custom-text").addEventListener("input", function () { state.customText = this.value; renderPreview(); });
+        $("text-pos").addEventListener("change", function () { state.textPos = this.value; renderPreview(); });
+        $("text-size").addEventListener("input", function () { state.textSize = parseFloat(this.value); $("text-size-num").value = this.value; renderPreview(); });
+        $("text-size-num").addEventListener("change", function () {
+          var v = parseFloat(this.value);
+          if (!isNaN(v)) { state.textSize = Math.min(8, Math.max(2, v)); this.value = state.textSize; $("text-size").value = state.textSize; renderPreview(); }
+        });
 
         document.querySelectorAll("#page-nav .chip").forEach(function (ch) {
           ch.addEventListener("click", function () {
@@ -1394,6 +1457,7 @@
           $("lang-en").setAttribute("aria-pressed", state.lang === "en" ? "true" : "false");
           $("lang-ja").setAttribute("aria-pressed", state.lang === "ja" ? "true" : "false");
           $("spacing-label").textContent = (state.lang === "ja" ? SPACING_LABELS_JA : SPACING_LABELS)[state.type];
+          $("custom-text").placeholder = STR[state.lang].textPh;
           buildMonthOptions();
           buildPresets();
           renderPreview();
