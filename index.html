@@ -474,6 +474,30 @@
             <input type="text" id="custom-text" maxlength="60" autocomplete="off" />
           </div>
           <div>
+            <label class="field-label" for="text-font" data-i18n="fontLabel">Font</label>
+            <select id="text-font">
+              <option value="" data-i18n="fontDefault">Default</option>
+              <option value="Montserrat">Montserrat</option>
+              <option value="Playfair Display">Playfair Display</option>
+              <option value="Lora">Lora</option>
+              <option value="Oswald">Oswald</option>
+              <option value="Caveat">Caveat</option>
+              <option value="Dancing Script">Dancing Script</option>
+              <option value="Special Elite">Special Elite</option>
+              <option value="Noto Sans JP">Noto Sans JP (Japanese)</option>
+              <option value="Noto Serif JP">Noto Serif JP (Japanese)</option>
+              <option value="Shippori Mincho">Shippori Mincho (Japanese)</option>
+              <option value="M PLUS Rounded 1c">M PLUS Rounded 1c (Japanese)</option>
+              <option value="Zen Maru Gothic">Zen Maru Gothic (Japanese)</option>
+              <option value="__custom" data-i18n="fontCustomOpt">Custom (type a name)…</option>
+            </select>
+          </div>
+          <div id="font-custom-wrap" hidden>
+            <label class="field-label" for="text-font-custom" data-i18n="fontCustomLabel">Google Fonts name</label>
+            <input type="text" id="text-font-custom" autocomplete="off" placeholder="e.g. Playfair Display" />
+            <p class="note" id="font-status" role="status"></p>
+          </div>
+          <div>
             <label class="field-label" for="text-pos" data-i18n="textPosLabel">Position</label>
             <select id="text-pos">
               <option value="top-left" data-i18n="posTL">Top left</option>
@@ -651,6 +675,8 @@
             textGroup: "Your text", textLabel: "Text", textPh: "Your name, a title, anything",
             textPosLabel: "Position", posTL: "Top left", posTC: "Top centre", posTR: "Top right",
             posBL: "Bottom left", posBC: "Bottom centre", posBR: "Bottom right", textSizeLabel: "Text size",
+            fontLabel: "Font", fontDefault: "Default", fontCustomOpt: "Custom (type a name)…",
+            fontCustomLabel: "Google Fonts name", fontNotFound: "That font didn't load — check the name.",
             sw1: "Light grey", sw2: "Grey", sw3: "Dark grey", sw4: "Light blue", sw5: "Blue",
             specTpl: "{name} · {w} × {h} mm · margin {m} mm",
             zoomTpl: "preview at {p}% of true size",
@@ -688,6 +714,8 @@
             textGroup: "テキスト", textLabel: "文字", textPh: "名前やタイトルなど",
             textPosLabel: "位置", posTL: "左上", posTC: "上・中央", posTR: "右上",
             posBL: "左下", posBC: "下・中央", posBR: "右下", textSizeLabel: "文字サイズ",
+            fontLabel: "フォント", fontDefault: "デフォルト", fontCustomOpt: "カスタム（名前を入力）…",
+            fontCustomLabel: "Google Fontsのフォント名", fontNotFound: "フォントを読み込めませんでした — 名前を確認してください。",
             sw1: "薄いグレー", sw2: "グレー", sw3: "濃いグレー", sw4: "薄い青", sw5: "青",
             specTpl: "{name} · {w} × {h} mm · 余白 {m} mm",
             zoomTpl: "実寸の {p}% で表示中",
@@ -728,6 +756,8 @@
           weekStart: 0,
           holes: false,
           customText: "",
+          textFont: "",
+          textFontCustom: "",
           textPos: "bottom-center",
           textSize: 4,
           type: "graph",
@@ -881,6 +911,37 @@
           }
         }
 
+        /* ---------- Google Fonts loading for the user text ---------- */
+        var loadedFonts = {};
+        function currentFontFamily() {
+          return state.textFont === "__custom" ? (state.textFontCustom || "").trim() : state.textFont;
+        }
+        function ensureFont(name) {
+          if (!name) return;
+          if (loadedFonts[name]) { renderPreview(); return; }
+          loadedFonts[name] = true;
+          var enc = encodeURIComponent(name).replace(/%20/g, "+");
+          var link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = "https://fonts.googleapis.com/css2?family=" + enc + ":wght@400;600;700&display=swap";
+          link.onerror = function () { link.href = "https://fonts.googleapis.com/css2?family=" + enc + "&display=swap"; };
+          document.head.appendChild(link);
+          function done(faces) {
+            var st = $("font-status");
+            if (st) st.textContent = (faces && faces.length === 0 && state.textFont === "__custom") ? STR[state.lang].fontNotFound : "";
+            renderPreview();
+          }
+          if (document.fonts && document.fonts.load) {
+            Promise.race([
+              Promise.all([
+                document.fonts.load('600 20px "' + name + '"'),
+                document.fonts.load('400 20px "' + name + '"')
+              ]).then(function (r) { return r[0].concat(r[1]); }),
+              new Promise(function (res) { setTimeout(function () { res(null); }, 2500); })
+            ]).then(done, function () { done(null); });
+          }
+        }
+
         /* ---------- user text overlay (name / title stamp) ---------- */
         function drawCustomText(c, wMM, hMM) {
           var s = (state.customText || "").trim();
@@ -894,7 +955,8 @@
           else if (pos.indexOf("right") >= 0) { x = wMM - edge; align = "right"; }
           else { x = wMM / 2; align = "center"; }
           var y = pos.indexOf("top") === 0 ? band : hMM - band;
-          c.font = "600 " + state.textSize + "px " + JP_FONT;
+          var fam = currentFontFamily();
+          c.font = "600 " + state.textSize + "px " + (fam ? '"' + fam + '", ' : "") + JP_FONT;
           c.textAlign = align;
           c.textBaseline = "middle";
           c.fillStyle = "#333740";
@@ -1421,6 +1483,17 @@
         $("weekstart").addEventListener("change", function () { state.weekStart = parseInt(this.value, 10); renderPreview(); });
         $("holes").addEventListener("change", function () { state.holes = this.checked; renderPreview(); });
         $("custom-text").addEventListener("input", function () { state.customText = this.value; renderPreview(); });
+        $("text-font").addEventListener("change", function () {
+          state.textFont = this.value;
+          $("font-custom-wrap").hidden = this.value !== "__custom";
+          var fam = currentFontFamily();
+          if (fam) ensureFont(fam); else renderPreview();
+        });
+        $("text-font-custom").addEventListener("input", function () {
+          state.textFontCustom = this.value;
+          var fam = currentFontFamily();
+          if (fam) ensureFont(fam); else renderPreview();
+        });
         $("text-pos").addEventListener("change", function () { state.textPos = this.value; renderPreview(); });
         $("text-size").addEventListener("input", function () { state.textSize = parseFloat(this.value); $("text-size-num").value = this.value; renderPreview(); });
         $("text-size-num").addEventListener("change", function () {
