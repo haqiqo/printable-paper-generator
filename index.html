@@ -325,6 +325,10 @@
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="2" y="2" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 2v15.5M2 17.5h22" stroke="currentColor" stroke-width="1.2"/></svg>
               Cornell
             </button>
+            <button type="button" data-type="genkou" aria-pressed="false">
+              <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="2" y="2" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7.5 2v22M13 2v22M18.5 2v22M2 7.5h22M2 13h22M2 18.5h22" stroke="currentColor" stroke-width="0.8"/></svg>
+              Genkō
+            </button>
           </div>
         </div>
 
@@ -342,6 +346,8 @@
                 <option value="a4" selected>A4 — 210 × 297 mm</option>
                 <option value="letter">Letter — 8.5 × 11 in</option>
                 <option value="a5">A5 — 148 × 210 mm</option>
+                <option value="b5">B5 (JIS) — 182 × 257 mm</option>
+                <option value="b4">B4 (JIS) — 257 × 364 mm</option>
               </select>
             </div>
             <div>
@@ -432,7 +438,9 @@
         var SIZES = {
           a4:     { name: "A4",     w: 210,   h: 297   },
           letter: { name: "Letter", w: 215.9, h: 279.4 },
-          a5:     { name: "A5",     w: 148,   h: 210   }
+          a5:     { name: "A5",     w: 148,   h: 210   },
+          b5:     { name: "B5",     w: 182,   h: 257   },
+          b4:     { name: "B4",     w: 257,   h: 364   }
         };
 
         var PRESETS = {
@@ -472,13 +480,18 @@
           cornell: [
             { label: "College ruled 7 mm", spacing: 7, weight: 0.25, color: "#8fb4dd" },
             { label: "Wide ruled 9 mm",    spacing: 9, weight: 0.25, color: "#8fb4dd" }
+          ],
+          genkou: [
+            { label: "400字 · A4 standard", spacing: 9.5, weight: 0.25, color: "#878e99" },
+            { label: "Large cells 12 mm",   spacing: 12,  weight: 0.3,  color: "#878e99" },
+            { label: "Fine cells 8 mm",     spacing: 8,   weight: 0.2,  color: "#b7bdc7" }
           ]
         };
 
         var SPACING_LABELS = {
           graph: "Grid spacing", dot: "Dot spacing", lined: "Line spacing",
           iso: "Triangle size", hex: "Hex size", handwriting: "Line height",
-          music: "Staff height", cornell: "Line spacing"
+          music: "Staff height", cornell: "Line spacing", genkou: "Cell size"
         };
         var SPACING_RANGE = {
           graph: { min: 2, max: 20 },
@@ -488,9 +501,10 @@
           hex:   { min: 4, max: 20 },
           handwriting: { min: 8, max: 25 },
           music: { min: 6, max: 16 },
-          cornell: { min: 4, max: 25 }
+          cornell: { min: 4, max: 25 },
+          genkou: { min: 7, max: 15 }
         };
-        var TYPE_DEFAULT_SPACING = { iso: 6, hex: 8, handwriting: 14, music: 10, cornell: 7 };
+        var TYPE_DEFAULT_SPACING = { iso: 6, hex: 8, handwriting: 14, music: 10, cornell: 7, genkou: 9.5 };
 
         var state = {
           type: "graph",
@@ -609,6 +623,28 @@
               }
             }
             c.stroke();
+          } else if (state.type === "genkou") {
+            /* Square character block: as many columns as fit the width,
+               the same number of rows, centred vertically — the classic
+               genkō yōshi layout (20 x 20 = 400 characters on A4). */
+            var colsG = Math.max(4, Math.floor((x1 - x0) / sp));
+            var cell = (x1 - x0) / colsG;
+            var blockH = colsG * cell;
+            var gy0 = y0 + ((y1 - y0) - blockH) / 2;
+            var gy1 = gy0 + blockH;
+            c.lineWidth = state.weight;
+            c.beginPath();
+            for (var gx = x0 + cell; gx < x1 - 0.001; gx += cell) { c.moveTo(gx, gy0); c.lineTo(gx, gy1); }
+            for (var gy = gy0 + cell; gy < gy1 - 0.001; gy += cell) { c.moveTo(x0, gy); c.lineTo(x1, gy); }
+            c.stroke();
+            c.lineWidth = state.weight * 1.6;
+            c.strokeRect(x0, gy0, x1 - x0, blockH);
+            /* fish-tail fold marks at the centre of both side edges */
+            var midY = gy0 + blockH / 2, ft = 2.6;
+            c.beginPath();
+            c.moveTo(x0, midY - ft); c.lineTo(x0 + ft, midY); c.lineTo(x0, midY + ft);
+            c.moveTo(x1, midY - ft); c.lineTo(x1 - ft, midY); c.lineTo(x1, midY + ft);
+            c.stroke();
           } else { /* cornell */
             var cueW = Math.min(65, (x1 - x0) * 0.32);
             var sumH = Math.max(28, (y1 - y0) * 0.22);
@@ -660,6 +696,9 @@
           } else if (state.type === "music") {
             var staves = Math.floor((innerH - state.spacing) / (state.spacing * 2.2) + 0.001) + 1;
             detail = staves + " blank staves, each " + fmt(state.spacing) + " mm tall.";
+          } else if (state.type === "genkou") {
+            var colsG2 = Math.max(4, Math.floor(innerW / state.spacing + 0.001));
+            detail = "Genkō yōshi manuscript paper: " + colsG2 + " × " + colsG2 + " = " + (colsG2 * colsG2) + " characters, cells " + fmt(innerW / colsG2) + " mm.";
           } else detail = "Cornell layout: cue column on the left, ruled notes, and a summary box at the bottom.";
           $("detail").textContent = detail + " The PDF prints at exactly these measurements.";
         }
@@ -687,7 +726,7 @@
           var names = {
             graph: "graph-paper", dot: "dot-grid", lined: "lined-paper",
             iso: "isometric-paper", hex: "hex-paper", handwriting: "handwriting-paper",
-            music: "sheet-music", cornell: "cornell-notes"
+            music: "sheet-music", cornell: "cornell-notes", genkou: "genkou-youshi"
           };
           return names[state.type] + "-" + state.size + "-" + fmt(state.spacing) + "mm";
         }
