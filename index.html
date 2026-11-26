@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="data:," />
+    <meta name="description" content="Free printable paper generator: graph, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell and genkou youshi paper at exact millimetre scale. Download print-ready PDFs at 300 DPI." />
     <title>Printable Paper Generator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -79,6 +80,24 @@
         display: flex;
         flex-direction: column;
         gap: 22px;
+      }
+      .lang-switch { display: flex; gap: 6px; justify-content: flex-end; }
+      .lang-switch button {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        border-radius: 999px;
+        padding: 4px 14px;
+        min-height: 2rem;
+        font-size: .82rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--ink-2);
+      }
+      .lang-switch button[aria-pressed="true"] {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent);
       }
       .panel h1 {
         font-size: 1.3rem;
@@ -285,63 +304,67 @@
     <div class="layout">
       <!-- ======================= CONTROLS ======================= -->
       <section class="panel" aria-label="Paper settings">
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button type="button" id="lang-en" aria-pressed="true">EN</button>
+          <button type="button" id="lang-ja" aria-pressed="false">日本語</button>
+        </div>
         <div>
-          <h1>Printable Paper Generator</h1>
-          <p class="sub">Set the exact sheet you need — spacing, margins, line weight — preview it live, and download a print-ready PDF at true scale.</p>
+          <h1 data-i18n="h1">Printable Paper Generator</h1>
+          <p class="sub" data-i18n="sub">Set the exact sheet you need — spacing, margins, line weight — preview it live, and download a print-ready PDF at true scale.</p>
         </div>
 
         <div class="group">
-          <span class="glabel" id="type-label">Paper type</span>
+          <span class="glabel" id="type-label" data-i18n="typeLabel">Paper type</span>
           <div class="seg" role="group" aria-labelledby="type-label">
             <button type="button" data-type="graph" aria-pressed="true">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9 1v24M17 1v24M1 9h24M1 17h24" stroke="currentColor" stroke-width="1"/></svg>
-              Graph
+              <span data-i18n="typeGraph">Graph</span>
             </button>
             <button type="button" data-type="dot" aria-pressed="false">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><g fill="currentColor"><circle cx="4" cy="4" r="1.6"/><circle cx="13" cy="4" r="1.6"/><circle cx="22" cy="4" r="1.6"/><circle cx="4" cy="13" r="1.6"/><circle cx="13" cy="13" r="1.6"/><circle cx="22" cy="13" r="1.6"/><circle cx="4" cy="22" r="1.6"/><circle cx="13" cy="22" r="1.6"/><circle cx="22" cy="22" r="1.6"/></g></svg>
-              Dot grid
+              <span data-i18n="typeDot">Dot grid</span>
             </button>
             <button type="button" data-type="lined" aria-pressed="false">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M2 5h22M2 10.5h22M2 16h22M2 21.5h22" stroke="currentColor" stroke-width="1.4"/></svg>
-              Lined
+              <span data-i18n="typeLined">Lined</span>
             </button>
             <button type="button" data-type="iso" aria-pressed="false">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 24 21H2Z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M13 2v19M13 2 7.5 21M13 2l5.5 19" stroke="currentColor" stroke-width="1"/></svg>
-              Isometric
+              <span data-i18n="typeIso">Isometric</span>
             </button>
             <button type="button" data-type="hex" aria-pressed="false">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2l9.5 5.5v11L13 24l-9.5-5.5v-11Z" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
-              Hex
+              <span data-i18n="typeHex">Hex</span>
             </button>
             <button type="button" data-type="handwriting" aria-pressed="false">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M2 4h22M2 22h22" stroke="currentColor" stroke-width="1.4"/><path d="M2 13h22" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3"/></svg>
-              Writing
+              <span data-i18n="typeWriting">Writing</span>
             </button>
             <button type="button" data-type="music" aria-pressed="false">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M2 4h22M2 8.5h22M2 13h22M2 17.5h22M2 22h22" stroke="currentColor" stroke-width="1.2"/></svg>
-              Music
+              <span data-i18n="typeMusic">Music</span>
             </button>
             <button type="button" data-type="cornell" aria-pressed="false">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="2" y="2" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 2v15.5M2 17.5h22" stroke="currentColor" stroke-width="1.2"/></svg>
-              Cornell
+              <span data-i18n="typeCornell">Cornell</span>
             </button>
             <button type="button" data-type="genkou" aria-pressed="false">
               <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="2" y="2" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7.5 2v22M13 2v22M18.5 2v22M2 7.5h22M2 13h22M2 18.5h22" stroke="currentColor" stroke-width="0.8"/></svg>
-              Genkō
+              <span data-i18n="typeGenkou">Genkō</span>
             </button>
           </div>
         </div>
 
         <div class="group">
-          <span class="glabel">Presets</span>
+          <span class="glabel" data-i18n="presets">Presets</span>
           <div class="chips" id="presets"></div>
         </div>
 
         <div class="group">
-          <span class="glabel">Sheet</span>
+          <span class="glabel" data-i18n="sheet">Sheet</span>
           <div class="row2">
             <div>
-              <label class="field-label" for="size">Paper size</label>
+              <label class="field-label" for="size" data-i18n="paperSize">Paper size</label>
               <select id="size">
                 <option value="a4" selected>A4 — 210 × 297 mm</option>
                 <option value="letter">Letter — 8.5 × 11 in</option>
@@ -351,10 +374,10 @@
               </select>
             </div>
             <div>
-              <label class="field-label" for="orient">Orientation</label>
+              <label class="field-label" for="orient" data-i18n="orientation">Orientation</label>
               <select id="orient">
-                <option value="portrait" selected>Portrait</option>
-                <option value="landscape">Landscape</option>
+                <option value="portrait" selected data-i18n="portrait">Portrait</option>
+                <option value="landscape" data-i18n="landscape">Landscape</option>
               </select>
             </div>
           </div>
@@ -372,7 +395,7 @@
         </div>
 
         <div class="group">
-          <label class="glabel" for="margin">Margin</label>
+          <label class="glabel" for="margin" data-i18n="margin">Margin</label>
           <div class="slider-row">
             <input type="range" id="margin" min="0" max="30" step="1" value="10" />
             <div class="numwrap">
@@ -383,7 +406,7 @@
         </div>
 
         <div class="group">
-          <label class="glabel" for="weight">Line weight</label>
+          <label class="glabel" for="weight" data-i18n="weight">Line weight</label>
           <div class="slider-row">
             <input type="range" id="weight" min="0.1" max="0.8" step="0.05" value="0.25" />
             <div class="numwrap">
@@ -394,16 +417,16 @@
         </div>
 
         <div class="group">
-          <span class="glabel" id="color-label">Line colour</span>
+          <span class="glabel" id="color-label" data-i18n="color">Line colour</span>
           <div class="swatches" role="group" aria-labelledby="color-label" id="swatches">
-            <button type="button" class="swatch" data-color="#b7bdc7" style="background:#b7bdc7" aria-label="Light grey" aria-pressed="true"></button>
-            <button type="button" class="swatch" data-color="#878e99" style="background:#878e99" aria-label="Grey" aria-pressed="false"></button>
-            <button type="button" class="swatch" data-color="#3c424c" style="background:#3c424c" aria-label="Dark grey" aria-pressed="false"></button>
-            <button type="button" class="swatch" data-color="#8fb4dd" style="background:#8fb4dd" aria-label="Light blue" aria-pressed="false"></button>
-            <button type="button" class="swatch" data-color="#2f6fd0" style="background:#2f6fd0" aria-label="Blue" aria-pressed="false"></button>
+            <button type="button" class="swatch" data-color="#b7bdc7" style="background:#b7bdc7" aria-label="Light grey" data-i18n-aria="sw1" aria-pressed="true"></button>
+            <button type="button" class="swatch" data-color="#878e99" style="background:#878e99" aria-label="Grey" data-i18n-aria="sw2" aria-pressed="false"></button>
+            <button type="button" class="swatch" data-color="#3c424c" style="background:#3c424c" aria-label="Dark grey" data-i18n-aria="sw3" aria-pressed="false"></button>
+            <button type="button" class="swatch" data-color="#8fb4dd" style="background:#8fb4dd" aria-label="Light blue" data-i18n-aria="sw4" aria-pressed="false"></button>
+            <button type="button" class="swatch" data-color="#2f6fd0" style="background:#2f6fd0" aria-label="Blue" data-i18n-aria="sw5" aria-pressed="false"></button>
             <label class="custom-color">
               <input type="color" id="custom-color" value="#b7bdc7" aria-label="Custom line colour" />
-              Custom
+              <span data-i18n="custom">Custom</span>
             </label>
           </div>
         </div>
@@ -411,10 +434,10 @@
         <div class="actions">
           <button type="button" class="btn btn-primary" id="download">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6.5 10.5 5.5 5.5 5.5-5.5"/><path d="M4 20h16"/></svg>
-            Download PDF
+            <span data-i18n="download">Download PDF</span>
           </button>
           <p class="status" id="status" role="status" aria-live="polite"></p>
-          <p class="hint">The PDF is generated on your device at 300 DPI with exact millimetre geometry. When printing, choose <strong>Actual size / 100%</strong> — not “Fit to page” — so the grid stays true to scale.</p>
+          <p class="hint" data-i18n-html="hint">The PDF is generated on your device at 300 DPI with exact millimetre geometry. When printing, choose <strong>Actual size / 100%</strong> — not “Fit to page” — so the grid stays true to scale.</p>
         </div>
       </section>
 
@@ -506,7 +529,97 @@
         };
         var TYPE_DEFAULT_SPACING = { iso: 6, hex: 8, handwriting: 14, music: 10, cornell: 7, genkou: 9.5 };
 
+        var SPACING_LABELS_JA = {
+          graph: "マス目の間隔", dot: "ドットの間隔", lined: "罫線の間隔",
+          iso: "三角のサイズ", hex: "六角形のサイズ", handwriting: "行の高さ",
+          music: "五線の高さ", cornell: "罫線の間隔", genkou: "マスのサイズ"
+        };
+
+        var PRESET_JA = {
+          "Standard 5 mm": "標準 5 mm", "Fine 2 mm engineering": "細かい 2 mm（製図）", "Big squares 10 mm": "大きいマス 10 mm",
+          "Bullet journal 5 mm": "バレットジャーナル 5 mm", "Loose dots 8 mm": "ゆったり 8 mm", "Dense dots 4 mm": "細かい 4 mm",
+          "College ruled 7 mm": "罫線 7 mm", "Wide ruled 11 mm": "広い罫線 11 mm", "Kids' lines 14 mm": "子ども用 14 mm",
+          "Isometric 5 mm": "アイソメ 5 mm", "Isometric 10 mm": "アイソメ 10 mm",
+          "Hex 6 mm": "六角形 6 mm", "Hex 10 mm": "六角形 10 mm",
+          "Primary 14 mm": "基本 14 mm", "Wide 18 mm": "広い 18 mm", "Narrow 11 mm": "狭い 11 mm",
+          "Standard staff": "標準の五線", "Large staff": "大きい五線", "Small staff": "小さい五線",
+          "Wide ruled 9 mm": "広い罫線 9 mm",
+          "400字 · A4 standard": "400字詰め（A4標準）", "Large cells 12 mm": "大きいマス 12 mm", "Fine cells 8 mm": "細かいマス 8 mm"
+        };
+
+        var STR = {
+          en: {
+            title: "Printable Paper Generator",
+            metaDesc: "Free printable paper generator: graph, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell and genkou youshi paper at exact millimetre scale. Download print-ready PDFs at 300 DPI.",
+            h1: "Printable Paper Generator",
+            sub: "Set the exact sheet you need — spacing, margins, line weight — preview it live, and download a print-ready PDF at true scale.",
+            typeLabel: "Paper type", presets: "Presets", sheet: "Sheet",
+            paperSize: "Paper size", orientation: "Orientation", portrait: "Portrait", landscape: "Landscape",
+            margin: "Margin", weight: "Line weight", color: "Line colour", custom: "Custom", download: "Download PDF",
+            hint: "The PDF is generated on your device at 300 DPI with exact millimetre geometry. When printing, choose <strong>Actual size / 100%</strong> — not “Fit to page” — so the grid stays true to scale.",
+            typeGraph: "Graph", typeDot: "Dot grid", typeLined: "Lined", typeIso: "Isometric", typeHex: "Hex",
+            typeWriting: "Writing", typeMusic: "Music", typeCornell: "Cornell", typeGenkou: "Genkō",
+            sw1: "Light grey", sw2: "Grey", sw3: "Dark grey", sw4: "Light blue", sw5: "Blue",
+            specTpl: "{name} · {w} × {h} mm · margin {m} mm",
+            zoomTpl: "preview at {p}% of true size",
+            detailGraph: "{c} × {r} squares of {s} mm inside the margins.",
+            detailDot: "{c} × {r} dots, {s} mm apart.",
+            detailLined: "{r} ruled lines, {s} mm apart.",
+            detailIso: "Isometric grid of {s} mm triangles inside the margins.",
+            detailHex: "Hexagons {s} mm corner to corner inside the margins.",
+            detailWriting: "{g} handwriting lines with a dashed midline, {s} mm tall.",
+            detailMusic: "{n} blank staves, each {s} mm tall.",
+            detailCornell: "Cornell layout: cue column on the left, ruled notes, and a summary box at the bottom.",
+            detailGenkou: "Genkō yōshi manuscript paper: {c} × {c} = {n} characters, cells {cell} mm.",
+            detailSuffix: " The PDF prints at exactly these measurements.",
+            statusBuilding: "Building your PDF…",
+            statusPdf: "PDF downloaded — print it at Actual size / 100% so the {s} mm spacing stays exact.",
+            statusPng: "PDF library couldn't load, so a 300 DPI PNG was downloaded instead — it prints at the same true scale.",
+            statusError: "Something went wrong building the file. Please try again."
+          },
+          ja: {
+            title: "方眼紙ジェネレーター｜印刷用紙メーカー",
+            metaDesc: "方眼紙・ドット・罫線・アイソメ・六角形・書写・五線譜・コーネル・原稿用紙を、正確なミリ単位で作成できる無料ツール。A4・B5・B4対応、300 DPIの印刷用PDFをダウンロード。",
+            h1: "印刷用紙ジェネレーター",
+            sub: "間隔・余白・線の太さを正確に設定して、プレビューで確認、そのまま印刷できるPDFをダウンロード。すべてブラウザの中で生成されます。",
+            typeLabel: "用紙の種類", presets: "プリセット", sheet: "用紙",
+            paperSize: "用紙サイズ", orientation: "向き", portrait: "縦", landscape: "横",
+            margin: "余白", weight: "線の太さ", color: "線の色", custom: "カスタム", download: "PDFをダウンロード",
+            hint: "PDFはお使いの端末で300 DPI・正確なミリ単位で生成されます。印刷のときは<strong>「実際のサイズ / 100%」</strong>を選んでください。「用紙に合わせる」だと縮小されてしまいます。",
+            typeGraph: "方眼", typeDot: "ドット", typeLined: "罫線", typeIso: "アイソメ", typeHex: "六角形",
+            typeWriting: "書写", typeMusic: "五線譜", typeCornell: "コーネル", typeGenkou: "原稿",
+            sw1: "薄いグレー", sw2: "グレー", sw3: "濃いグレー", sw4: "薄い青", sw5: "青",
+            specTpl: "{name} · {w} × {h} mm · 余白 {m} mm",
+            zoomTpl: "実寸の {p}% で表示中",
+            detailGraph: "余白の内側に {s} mm のマス目が {c} × {r}。",
+            detailDot: "{s} mm 間隔のドットが {c} × {r}。",
+            detailLined: "{s} mm 間隔の罫線が {r} 本。",
+            detailIso: "余白の内側に {s} mm のアイソメトリック（三角）グリッド。",
+            detailHex: "対角 {s} mm の六角形グリッド。",
+            detailWriting: "中線（点線）入りの書写ラインが {g} 行、高さ {s} mm。",
+            detailMusic: "高さ {s} mm の五線譜が {n} 段。",
+            detailCornell: "コーネル式レイアウト：左にキーワード欄、右にノート欄、下にまとめ欄。",
+            detailGenkou: "原稿用紙：{c} × {c} ＝ {n} 字詰め、マスは {cell} mm。",
+            detailSuffix: " PDFはこの寸法どおりに印刷されます。",
+            statusBuilding: "PDFを作成中…",
+            statusPdf: "PDFをダウンロードしました — {s} mm の間隔を正確に保つため、「実際のサイズ（100%）」で印刷してください。",
+            statusPng: "PDFライブラリを読み込めなかったため、300 DPIのPNGをダウンロードしました（同じ実寸で印刷できます）。",
+            statusError: "ファイルの作成に失敗しました。もう一度お試しください。"
+          }
+        };
+
+        function fill(tpl, vals) {
+          return tpl.replace(/\{(\w+)\}/g, function (m, k) { return vals[k] !== undefined ? vals[k] : m; });
+        }
+
         var state = {
+          lang: (function () {
+            try {
+              var saved = localStorage.getItem("ppg-lang");
+              if (saved === "ja" || saved === "en") return saved;
+            } catch (e) { /* private mode */ }
+            return (navigator.language || "en").indexOf("ja") === 0 ? "ja" : "en";
+          })(),
           type: "graph",
           size: "a4",
           orient: "portrait",
@@ -677,30 +790,31 @@
           ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
           drawPaper(ctx, dims.w, dims.h);
 
+          var L = STR[state.lang];
           var sizeName = SIZES[state.size].name;
-          $("spec").textContent = sizeName + " · " + fmt(dims.w) + " × " + fmt(dims.h) + " mm · margin " + fmt(state.margin) + " mm";
-          $("zoom-note").textContent = "preview at " + Math.round(scale / (96 / 25.4) * 100) + "% of true size";
+          $("spec").textContent = fill(L.specTpl, { name: sizeName, w: fmt(dims.w), h: fmt(dims.h), m: fmt(state.margin) });
+          $("zoom-note").textContent = fill(L.zoomTpl, { p: Math.round(scale / (96 / 25.4) * 100) });
 
           var innerW = dims.w - state.margin * 2, innerH = dims.h - state.margin * 2;
           var cols = Math.floor(innerW / state.spacing + 0.001);
           var rows = Math.floor(innerH / state.spacing + 0.001);
-          var detail;
-          if (state.type === "graph") detail = cols + " × " + rows + " squares of " + fmt(state.spacing) + " mm inside the margins.";
-          else if (state.type === "dot") detail = (cols + 1) + " × " + (rows + 1) + " dots, " + fmt(state.spacing) + " mm apart.";
-          else if (state.type === "lined") detail = rows + " ruled lines, " + fmt(state.spacing) + " mm apart.";
-          else if (state.type === "iso") detail = "Isometric grid of " + fmt(state.spacing) + " mm triangles inside the margins.";
-          else if (state.type === "hex") detail = "Hexagons " + fmt(state.spacing) + " mm corner to corner inside the margins.";
+          var s = fmt(state.spacing), detail;
+          if (state.type === "graph") detail = fill(L.detailGraph, { c: cols, r: rows, s: s });
+          else if (state.type === "dot") detail = fill(L.detailDot, { c: cols + 1, r: rows + 1, s: s });
+          else if (state.type === "lined") detail = fill(L.detailLined, { r: rows, s: s });
+          else if (state.type === "iso") detail = fill(L.detailIso, { s: s });
+          else if (state.type === "hex") detail = fill(L.detailHex, { s: s });
           else if (state.type === "handwriting") {
             var groups = Math.floor((innerH + state.spacing * 0.7) / (state.spacing * 1.7) + 0.001);
-            detail = groups + " handwriting lines with a dashed midline, " + fmt(state.spacing) + " mm tall.";
+            detail = fill(L.detailWriting, { g: groups, s: s });
           } else if (state.type === "music") {
             var staves = Math.floor((innerH - state.spacing) / (state.spacing * 2.2) + 0.001) + 1;
-            detail = staves + " blank staves, each " + fmt(state.spacing) + " mm tall.";
+            detail = fill(L.detailMusic, { n: staves, s: s });
           } else if (state.type === "genkou") {
             var colsG2 = Math.max(4, Math.floor(innerW / state.spacing + 0.001));
-            detail = "Genkō yōshi manuscript paper: " + colsG2 + " × " + colsG2 + " = " + (colsG2 * colsG2) + " characters, cells " + fmt(innerW / colsG2) + " mm.";
-          } else detail = "Cornell layout: cue column on the left, ruled notes, and a summary box at the bottom.";
-          $("detail").textContent = detail + " The PDF prints at exactly these measurements.";
+            detail = fill(L.detailGenkou, { c: colsG2, n: colsG2 * colsG2, cell: fmt(innerW / colsG2) });
+          } else detail = L.detailCornell;
+          $("detail").textContent = detail + L.detailSuffix;
         }
 
         /* ---------- PDF export at 300 DPI ---------- */
@@ -752,7 +866,7 @@
         $("download").addEventListener("click", function () {
           var btn = this;
           btn.disabled = true;
-          setStatus("Building your PDF…", false);
+          setStatus(STR[state.lang].statusBuilding, false);
           /* let the status paint before the (synchronous) heavy render */
           setTimeout(function () {
             try {
@@ -765,12 +879,12 @@
               document.body.removeChild(a);
               if (f.revoke) setTimeout(function () { URL.revokeObjectURL(f.url); }, 4000);
               if (f.pdf) {
-                setStatus("PDF downloaded — print it at Actual size / 100% so the " + fmt(state.spacing) + " mm spacing stays exact.", true);
+                setStatus(fill(STR[state.lang].statusPdf, { s: fmt(state.spacing) }), true);
               } else {
-                setStatus("PDF library couldn't load, so a 300 DPI PNG was downloaded instead — it prints at the same true scale.", true);
+                setStatus(STR[state.lang].statusPng, true);
               }
             } catch (e) {
-              setStatus("Something went wrong building the file. Please try again.", false);
+              setStatus(STR[state.lang].statusError, false);
             } finally {
               btn.disabled = false;
             }
@@ -793,7 +907,7 @@
             var b = document.createElement("button");
             b.type = "button";
             b.className = "chip";
-            b.textContent = p.label;
+            b.textContent = (state.lang === "ja" && PRESET_JA[p.label]) ? PRESET_JA[p.label] : p.label;
             b.addEventListener("click", function () {
               state.spacing = p.spacing;
               state.weight = p.weight;
@@ -811,7 +925,7 @@
           for (var i = 0; i < btns.length; i++) {
             btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-type") === t ? "true" : "false");
           }
-          $("spacing-label").textContent = SPACING_LABELS[t];
+          $("spacing-label").textContent = (state.lang === "ja" ? SPACING_LABELS_JA : SPACING_LABELS)[t];
           var r = SPACING_RANGE[t];
           var sp = $("spacing"), spn = $("spacing-num");
           sp.min = r.min; sp.max = r.max; spn.min = r.min; spn.max = r.max;
@@ -878,9 +992,44 @@
           resizeTimer = setTimeout(renderPreview, 120);
         });
 
-        buildPresets();
+        /* ---------- language ---------- */
+        function applyLang() {
+          var L = STR[state.lang];
+          document.documentElement.lang = state.lang;
+          document.title = L.title;
+          var md = document.querySelector('meta[name="description"]');
+          if (md) md.setAttribute("content", L.metaDesc);
+          document.querySelectorAll("[data-i18n]").forEach(function (el) {
+            var k = el.getAttribute("data-i18n");
+            if (L[k]) el.textContent = L[k];
+          });
+          document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+            var k = el.getAttribute("data-i18n-html");
+            if (L[k]) el.innerHTML = L[k];
+          });
+          document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
+            var k = el.getAttribute("data-i18n-aria");
+            if (L[k]) el.setAttribute("aria-label", L[k]);
+          });
+          $("lang-en").setAttribute("aria-pressed", state.lang === "en" ? "true" : "false");
+          $("lang-ja").setAttribute("aria-pressed", state.lang === "ja" ? "true" : "false");
+          $("spacing-label").textContent = (state.lang === "ja" ? SPACING_LABELS_JA : SPACING_LABELS)[state.type];
+          buildPresets();
+          renderPreview();
+        }
+
+        function setLang(l) {
+          if (state.lang === l) return;
+          state.lang = l;
+          try { localStorage.setItem("ppg-lang", l); } catch (e) { /* private mode */ }
+          applyLang();
+        }
+
+        $("lang-en").addEventListener("click", function () { setLang("en"); });
+        $("lang-ja").addEventListener("click", function () { setLang("ja"); });
+
         syncControls();
-        renderPreview();
+        applyLang();
       })();
     </script>
   </body>
