@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="data:," />
-    <meta name="description" content="Free printable paper generator: graph, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell and genkou youshi paper at exact millimetre scale. Download print-ready PDFs at 300 DPI." />
+    <meta name="description" content="Free printable paper generator: graph, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell, genkou youshi, planner refills and a monthly calendar at exact millimetre scale. Personalise it with your name in any Google font, and download print-ready PDFs at 300 DPI." />
     <title>Printable Paper Generator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -315,7 +315,7 @@
         </div>
         <div>
           <h1 data-i18n="h1">Printable Paper Generator</h1>
-          <p class="sub" data-i18n="sub">Set the exact sheet you need — spacing, margins, line weight — preview it live, and download a print-ready PDF at true scale.</p>
+          <p class="sub" data-i18n="sub">Set the exact sheet you need — spacing, margins, line weight — then stamp your name on it in any font you like. Personalise your paper and be proud of it: preview live, and download a print-ready PDF at true scale.</p>
         </div>
 
         <div class="group">
@@ -498,6 +498,32 @@
             <p class="note" id="font-status" role="status"></p>
           </div>
           <div>
+            <label class="field-label" for="logo-file" data-i18n="logoLabel">Logo / image</label>
+            <input type="file" id="logo-file" accept="image/*" />
+            <p class="note" data-i18n="logoNote">Stays on your device — never uploaded.</p>
+          </div>
+          <div id="logo-controls" hidden>
+            <div>
+              <label class="field-label" for="logo-pos" data-i18n="logoPosLabel">Logo position</label>
+              <select id="logo-pos">
+                <option value="top-left" data-i18n="posTL">Top left</option>
+                <option value="top-center" data-i18n="posTC">Top centre</option>
+                <option value="top-right" data-i18n="posTR" selected>Top right</option>
+                <option value="bottom-left" data-i18n="posBL">Bottom left</option>
+                <option value="bottom-center" data-i18n="posBC">Bottom centre</option>
+                <option value="bottom-right" data-i18n="posBR">Bottom right</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="logo-size"><span data-i18n="logoSizeLabel">Logo width</span> <span class="unit">mm</span></label>
+              <div class="slider-row">
+                <input type="range" id="logo-size" min="10" max="60" step="1" value="25" />
+                <input type="number" id="logo-size-num" min="10" max="60" step="1" value="25" />
+              </div>
+            </div>
+            <button type="button" class="btn" id="logo-remove" data-i18n="logoRemove">Remove logo</button>
+          </div>
+          <div>
             <label class="field-label" for="text-pos" data-i18n="textPosLabel">Position</label>
             <select id="text-pos">
               <option value="top-left" data-i18n="posTL">Top left</option>
@@ -660,9 +686,9 @@
         var STR = {
           en: {
             title: "Printable Paper Generator",
-            metaDesc: "Free printable paper generator: graph, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell and genkou youshi paper at exact millimetre scale. Download print-ready PDFs at 300 DPI.",
+            metaDesc: "Free printable paper generator: graph, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell, genkou youshi, planner refills and a monthly calendar at exact millimetre scale. Personalise it with your name in any Google font, and download print-ready PDFs at 300 DPI.",
             h1: "Printable Paper Generator",
-            sub: "Set the exact sheet you need — spacing, margins, line weight — preview it live, and download a print-ready PDF at true scale.",
+            sub: "Set the exact sheet you need — spacing, margins, line weight — then stamp your name on it in any font you like. Personalise your paper and be proud of it: preview live, and download a print-ready PDF at true scale.",
             typeLabel: "Paper type", presets: "Presets", sheet: "Sheet",
             paperSize: "Paper size", orientation: "Orientation", portrait: "Portrait", landscape: "Landscape",
             margin: "Margin", weight: "Line weight", color: "Line colour", custom: "Custom", download: "Download PDF",
@@ -677,6 +703,8 @@
             posBL: "Bottom left", posBC: "Bottom centre", posBR: "Bottom right", textSizeLabel: "Text size",
             fontLabel: "Font", fontDefault: "Default", fontCustomOpt: "Custom (type a name)…",
             fontCustomLabel: "Google Fonts name", fontNotFound: "That font didn't load — check the name.",
+            logoLabel: "Logo / image", logoNote: "Stays on your device — never uploaded.",
+            logoPosLabel: "Logo position", logoSizeLabel: "Logo width", logoRemove: "Remove logo",
             sw1: "Light grey", sw2: "Grey", sw3: "Dark grey", sw4: "Light blue", sw5: "Blue",
             specTpl: "{name} · {w} × {h} mm · margin {m} mm",
             zoomTpl: "preview at {p}% of true size",
@@ -699,9 +727,9 @@
           },
           ja: {
             title: "方眼紙ジェネレーター｜印刷用紙メーカー",
-            metaDesc: "方眼紙・ドット・罫線・アイソメ・六角形・書写・五線譜・コーネル・原稿用紙を、正確なミリ単位で作成できる無料ツール。A4・B5・B4対応、300 DPIの印刷用PDFをダウンロード。",
+            metaDesc: "方眼紙・ドット・罫線・アイソメ・六角形・書写・五線譜・コーネル・原稿用紙・手帳リフィル・月間カレンダーを、正確なミリ単位で作成できる無料ツール。名前を好きなフォントで入れてカスタマイズ、300 DPIの印刷用PDFをダウンロード。",
             h1: "印刷用紙ジェネレーター",
-            sub: "間隔・余白・線の太さを正確に設定して、プレビューで確認、そのまま印刷できるPDFをダウンロード。すべてブラウザの中で生成されます。",
+            sub: "間隔・余白・線の太さを正確に設定して、自分の名前を好きなフォントで入れてカスタマイズ。プレビューで確認、そのまま印刷できるPDFをダウンロード。すべてブラウザの中で生成されます。",
             typeLabel: "用紙の種類", presets: "プリセット", sheet: "用紙",
             paperSize: "用紙サイズ", orientation: "向き", portrait: "縦", landscape: "横",
             margin: "余白", weight: "線の太さ", color: "線の色", custom: "カスタム", download: "PDFをダウンロード",
@@ -716,6 +744,8 @@
             posBL: "左下", posBC: "下・中央", posBR: "右下", textSizeLabel: "文字サイズ",
             fontLabel: "フォント", fontDefault: "デフォルト", fontCustomOpt: "カスタム（名前を入力）…",
             fontCustomLabel: "Google Fontsのフォント名", fontNotFound: "フォントを読み込めませんでした — 名前を確認してください。",
+            logoLabel: "ロゴ・画像", logoNote: "画像は端末の中だけ — アップロードされません。",
+            logoPosLabel: "ロゴの位置", logoSizeLabel: "ロゴの幅", logoRemove: "ロゴを削除",
             sw1: "薄いグレー", sw2: "グレー", sw3: "濃いグレー", sw4: "薄い青", sw5: "青",
             specTpl: "{name} · {w} × {h} mm · 余白 {m} mm",
             zoomTpl: "実寸の {p}% で表示中",
@@ -756,6 +786,9 @@
           weekStart: 0,
           holes: false,
           customText: "",
+          logoImg: null,
+          logoPos: "top-right",
+          logoWidth: 25,
           textFont: "",
           textFontCustom: "",
           textPos: "bottom-center",
@@ -963,6 +996,27 @@
           c.fillText(s, x, y);
         }
 
+        /* ---------- user logo / image overlay ---------- */
+        function drawLogo(c, wMM, hMM) {
+          var img = state.logoImg;
+          if (!img || !img.naturalWidth) return;
+          var m = state.margin;
+          var edge = Math.max(4, m);
+          var band = Math.max(3.5, m / 2);
+          var w = Math.min(state.logoWidth, wMM - 8);
+          var h = w * img.naturalHeight / img.naturalWidth;
+          if (h > 45) { w = w * 45 / h; h = 45; }
+          var pos = state.logoPos, x, cy;
+          if (pos.indexOf("left") >= 0) x = edge;
+          else if (pos.indexOf("right") >= 0) x = wMM - edge - w;
+          else x = (wMM - w) / 2;
+          cy = pos.indexOf("top") === 0 ? band : hMM - band;
+          var y = cy - h / 2;
+          if (y < 1.5) y = 1.5;
+          if (y + h > hMM - 1.5) y = hMM - 1.5 - h;
+          c.drawImage(img, x, y, w, h);
+        }
+
         /* ---------- rirekisho: JIS-style resume form, 2 pages ---------- */
         function drawRirekisho(c, wMM, hMM, page) {
           var m = state.margin;
@@ -1097,8 +1151,8 @@
           var x0 = m, x1 = wMM - m, y0 = m, y1 = hMM - m;
           if (x1 <= x0 || y1 <= y0) return;
 
-          if (state.type === "rirekisho") { drawRirekisho(c, wMM, hMM, page || 0); drawCustomText(c, wMM, hMM); return; }
-          if (state.type === "monthly") { drawMonthly(c, wMM, hMM); drawHoles(c, wMM, hMM); drawCustomText(c, wMM, hMM); return; }
+          if (state.type === "rirekisho") { drawRirekisho(c, wMM, hMM, page || 0); drawCustomText(c, wMM, hMM); drawLogo(c, wMM, hMM); return; }
+          if (state.type === "monthly") { drawMonthly(c, wMM, hMM); drawHoles(c, wMM, hMM); drawCustomText(c, wMM, hMM); drawLogo(c, wMM, hMM); return; }
 
           if (state.type === "graph") {
             c.lineWidth = state.weight;
@@ -1225,6 +1279,7 @@
 
           drawHoles(c, wMM, hMM);
           drawCustomText(c, wMM, hMM);
+          drawLogo(c, wMM, hMM);
         }
 
         /* ---------- preview ---------- */
@@ -1493,6 +1548,30 @@
           state.textFontCustom = this.value;
           var fam = currentFontFamily();
           if (fam) ensureFont(fam); else renderPreview();
+        });
+        $("logo-file").addEventListener("change", function () {
+          var f = this.files && this.files[0];
+          if (!f) return;
+          var url = URL.createObjectURL(f);
+          var img = new Image();
+          img.onload = function () {
+            state.logoImg = img;
+            $("logo-controls").hidden = false;
+            renderPreview();
+          };
+          img.src = url;
+        });
+        $("logo-pos").addEventListener("change", function () { state.logoPos = this.value; renderPreview(); });
+        $("logo-size").addEventListener("input", function () { state.logoWidth = parseFloat(this.value); $("logo-size-num").value = this.value; renderPreview(); });
+        $("logo-size-num").addEventListener("change", function () {
+          var v = parseFloat(this.value);
+          if (!isNaN(v)) { state.logoWidth = Math.min(60, Math.max(10, v)); this.value = state.logoWidth; $("logo-size").value = state.logoWidth; renderPreview(); }
+        });
+        $("logo-remove").addEventListener("click", function () {
+          state.logoImg = null;
+          $("logo-file").value = "";
+          $("logo-controls").hidden = true;
+          renderPreview();
         });
         $("text-pos").addEventListener("change", function () { state.textPos = this.value; renderPreview(); });
         $("text-size").addEventListener("input", function () { state.textSize = parseFloat(this.value); $("text-size-num").value = this.value; renderPreview(); });
