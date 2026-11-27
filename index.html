@@ -263,6 +263,8 @@
       .btn-primary { background: var(--accent); color: var(--accent-ink); }
       .btn-primary:hover { filter: brightness(1.07); }
       .btn-primary:active { filter: brightness(.95); }
+      .actions-row { display: flex; gap: 8px; margin-top: 10px; }
+      .actions-row .btn { flex: 1; }
 
       .btn[disabled] { opacity: .55; cursor: wait; }
       .hint { font-size: .8rem; color: var(--ink-3); line-height: 1.5; margin: 0; }
@@ -576,6 +578,10 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6.5 10.5 5.5 5.5 5.5-5.5"/><path d="M4 20h16"/></svg>
             <span data-i18n="download">Download PDF</span>
           </button>
+          <div class="actions-row">
+            <button type="button" class="btn" id="share-link"><span data-i18n="shareLink">Copy settings link</span></button>
+            <button type="button" class="btn" id="reset-settings"><span data-i18n="resetSettings">Reset all settings</span></button>
+          </div>
           <p class="status" id="status" role="status" aria-live="polite"></p>
           <p class="hint" data-i18n-html="hint">The PDF is generated on your device at 300 DPI with exact millimetre geometry. When printing, choose <strong>Actual size / 100%</strong>, not “Fit to page”, so the grid stays true to scale.</p>
         </div>
@@ -719,7 +725,7 @@
             sub: "Set the exact sheet you need, spacing, margins, line weight, then stamp your name on it in any font you like. Personalise your paper and be proud of it: preview live, and download a print-ready PDF at true scale.",
             typeLabel: "Paper type", presets: "Presets", sheet: "Sheet",
             paperSize: "Paper size", orientation: "Orientation", portrait: "Portrait", landscape: "Landscape",
-            margin: "Margin", weight: "Line weight", color: "Line colour", custom: "Custom", download: "Download PDF",
+            margin: "Margin", weight: "Line weight", color: "Line colour", custom: "Custom", download: "Download PDF", shareLink: "Copy settings link", resetSettings: "Reset all settings", linkCopied: "Link copied. Anyone opening it sees this exact sheet setup.", linkInBar: "Your settings link is in the address bar. Copy it from there.", settingsReset: "Settings reset to the defaults.",
             hint: "The PDF is generated on your device at 300 DPI with exact millimetre geometry. When printing, choose <strong>Actual size / 100%</strong>, not “Fit to page”, so the grid stays true to scale.",
             typeGraph: "Graph", typeDot: "Dot grid", typeLined: "Lined", typeIso: "Isometric", typeHex: "Hex",
             typeWriting: "Writing", typeMusic: "Music", typeCornell: "Cornell", typeGenkou: "Genkō", typeRirekisho: "Rirekisho", typeMonthly: "Monthly",
@@ -760,7 +766,7 @@
             sub: "間隔・余白・線の太さを正確に設定して、自分の名前を好きなフォントで入れてカスタマイズ。プレビューで確認、そのまま印刷できるPDFをダウンロード。すべてブラウザの中で生成されます。",
             typeLabel: "用紙の種類", presets: "プリセット", sheet: "用紙",
             paperSize: "用紙サイズ", orientation: "向き", portrait: "縦", landscape: "横",
-            margin: "余白", weight: "線の太さ", color: "線の色", custom: "カスタム", download: "PDFをダウンロード",
+            margin: "余白", weight: "線の太さ", color: "線の色", custom: "カスタム", download: "PDFをダウンロード", shareLink: "設定リンクをコピー", resetSettings: "設定をリセット", linkCopied: "リンクをコピーしました。開くと今の設定がそのまま再現されます。", linkInBar: "アドレスバーに設定リンクを表示しました。そこからコピーしてください。", settingsReset: "設定を初期状態に戻しました。",
             hint: "PDFはお使いの端末で300 DPI・正確なミリ単位で生成されます。印刷のときは<strong>「実際のサイズ / 100%」</strong>を選んでください。「用紙に合わせる」だと縮小されてしまいます。",
             typeGraph: "方眼", typeDot: "ドット", typeLined: "罫線", typeIso: "アイソメ", typeHex: "六角形",
             typeWriting: "書写", typeMusic: "五線譜", typeCornell: "コーネル", typeGenkou: "原稿", typeRirekisho: "履歴書", typeMonthly: "マンスリー",
@@ -1670,9 +1676,145 @@
         $("lang-en").addEventListener("click", function () { setLang("en"); });
         $("lang-ja").addEventListener("click", function () { setLang("ja"); });
 
-        $("year").value = state.year;
-        buildMonthOptions();
-        syncControls();
+        /* ---------- Settings persistence: autosave + shareable link ---------- */
+        var PPG_KEYS = ["type", "size", "orient", "spacing", "margin", "weight", "color", "holes", "year", "month", "weekStart", "customText", "textFont", "textFontCustom", "textPos", "textSize", "logoPos", "logoWidth"];
+        var PPG_URL = { type: "t", size: "sz", orient: "o", spacing: "sp", margin: "mg", weight: "w", color: "c", holes: "h", year: "y", month: "mo", weekStart: "ws", customText: "txt", textFont: "f", textFontCustom: "fc", textPos: "tp", textSize: "ts", logoPos: "lp", logoWidth: "lw" };
+        var PPG_DEFAULTS = {};
+        PPG_KEYS.forEach(function (k) { PPG_DEFAULTS[k] = state[k]; });
+
+        function ppgClamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+        function applySettingsData(d) {
+          if (!d || typeof d !== "object") return;
+          if (typeof d.type === "string" && SPACING_RANGE[d.type]) state.type = d.type;
+          if (typeof d.size === "string" && SIZES[d.size]) state.size = d.size;
+          if (d.orient === "portrait" || d.orient === "landscape") state.orient = d.orient;
+          var nums = { spacing: [1, 30], margin: [0, 50], weight: [0.1, 2], textSize: [2, 8], logoWidth: [10, 60], year: [2000, 2100], month: [1, 12], weekStart: [0, 1] };
+          for (var k in nums) {
+            var v = parseFloat(d[k]);
+            if (!isNaN(v)) {
+              var cv = ppgClamp(v, nums[k][0], nums[k][1]);
+              state[k] = (k === "year" || k === "month" || k === "weekStart") ? Math.round(cv) : cv;
+            }
+          }
+          if (typeof d.color === "string" && /^#[0-9a-f]{6}$/i.test(d.color)) state.color = d.color;
+          if (d.holes === true || d.holes === 1 || d.holes === "1") state.holes = true;
+          if (d.holes === false || d.holes === 0 || d.holes === "0") state.holes = false;
+          if (typeof d.customText === "string") state.customText = d.customText.slice(0, 200);
+          if (typeof d.textFont === "string") state.textFont = d.textFont.slice(0, 100);
+          if (typeof d.textFontCustom === "string") state.textFontCustom = d.textFontCustom.slice(0, 100);
+          if (typeof d.textPos === "string") state.textPos = d.textPos;
+          if (typeof d.logoPos === "string") state.logoPos = d.logoPos;
+        }
+
+        function collectSettings() {
+          var o = {};
+          PPG_KEYS.forEach(function (k) { o[k] = state[k]; });
+          return o;
+        }
+
+        var ppgSaveTimer = null;
+        function scheduleSave() {
+          clearTimeout(ppgSaveTimer);
+          ppgSaveTimer = setTimeout(function () {
+            try { localStorage.setItem("ppg-settings", JSON.stringify(collectSettings())); } catch (e) { /* private mode */ }
+          }, 200);
+        }
+
+        var renderPreviewOrig = renderPreview;
+        renderPreview = function () { renderPreviewOrig(); scheduleSave(); };
+
+        function restoreSettings() {
+          var data = null;
+          try {
+            var q = new URLSearchParams(window.location.search);
+            var u = {}, any = false;
+            PPG_KEYS.forEach(function (k) {
+              var v = q.get(PPG_URL[k]);
+              if (v !== null) { u[k] = v; any = true; }
+            });
+            if (any) data = u;
+          } catch (e) { /* no URL params */ }
+          if (!data) {
+            try {
+              var raw = localStorage.getItem("ppg-settings");
+              if (raw) data = JSON.parse(raw);
+            } catch (e) { /* private mode */ }
+          }
+          if (data) applySettingsData(data);
+        }
+
+        function syncAllControls() {
+          $("size").value = state.size;
+          $("orient").value = state.orient;
+          $("holes").checked = state.holes;
+          $("weekstart").value = state.weekStart;
+          $("custom-text").value = state.customText;
+          var tf = $("text-font");
+          tf.value = state.textFont;
+          if (tf.value !== state.textFont) state.textFont = tf.value;
+          $("font-custom-wrap").hidden = state.textFont !== "__custom";
+          $("text-font-custom").value = state.textFontCustom;
+          var tp = $("text-pos");
+          tp.value = state.textPos;
+          if (tp.value !== state.textPos) state.textPos = tp.value;
+          $("text-size").value = state.textSize;
+          $("text-size-num").value = state.textSize;
+          var lp = $("logo-pos");
+          lp.value = state.logoPos;
+          if (lp.value !== state.logoPos) state.logoPos = lp.value;
+          $("logo-size").value = state.logoWidth;
+          $("logo-size-num").value = state.logoWidth;
+          $("custom-color").value = state.color;
+        }
+
+        function resyncFromState() {
+          $("year").value = state.year;
+          buildMonthOptions();
+          var keep = state.spacing;
+          setType(state.type);
+          var r = SPACING_RANGE[state.type];
+          state.spacing = ppgClamp(keep, r.min, r.max);
+          syncControls();
+          syncAllControls();
+          var fam = currentFontFamily();
+          if (fam) ensureFont(fam); else renderPreview();
+        }
+
+        function buildShareUrl() {
+          var q = new URLSearchParams();
+          PPG_KEYS.forEach(function (k) {
+            if (state[k] !== PPG_DEFAULTS[k]) q.set(PPG_URL[k], k === "holes" ? (state[k] ? "1" : "0") : String(state[k]));
+          });
+          var qs = q.toString();
+          return window.location.origin + window.location.pathname + (qs ? "?" + qs : "");
+        }
+
+        $("share-link").addEventListener("click", function () {
+          var url = buildShareUrl();
+          try { history.replaceState(null, "", url); } catch (e) { /* ignore */ }
+          var L = STR[state.lang];
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function () { setStatus(L.linkCopied, true); }, function () { setStatus(L.linkInBar, false); });
+          } else {
+            setStatus(L.linkInBar, false);
+          }
+        });
+
+        $("reset-settings").addEventListener("click", function () {
+          try { localStorage.removeItem("ppg-settings"); } catch (e) { /* private mode */ }
+          PPG_KEYS.forEach(function (k) { state[k] = PPG_DEFAULTS[k]; });
+          state.page = 0;
+          state.logoImg = null;
+          $("logo-file").value = "";
+          $("logo-controls").hidden = true;
+          try { history.replaceState(null, "", window.location.pathname); } catch (e) { /* ignore */ }
+          resyncFromState();
+          setStatus(STR[state.lang].settingsReset, true);
+        });
+
+        restoreSettings();
+        resyncFromState();
         applyLang();
       })();
     </script>
