@@ -987,7 +987,7 @@
               } else {
                 loadedFonts[name] = "failed";
                 var st2 = $("font-status");
-                if (st2) st2.textContent = (state.textFont === "__custom") ? STR[state.lang].fontNotFound : "";
+                if (st2) st2.textContent = (state.textFont === "__custom" && currentFontFamily() === name) ? STR[state.lang].fontNotFound : "";
                 renderPreview();
               }
             }, function () {
