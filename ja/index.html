@@ -198,6 +198,13 @@
       .make { max-width: 1180px; margin: 0 auto; padding: 28px 16px 4px; }
       .make h2 { font-size: 1.05rem; margin: 0 0 .5rem; }
       .make p { margin: 0; font-size: .9rem; line-height: 1.6; color: var(--ink-2); max-width: 72ch; }
+      .site-footer { background: #000; color: #f4f4f5; border-top: 1px solid #26282d; margin-top: 12px; }
+      .site-footer h2, .site-footer h3 { color: #fff; }
+      .site-footer .make p, .site-footer .faq-item p { color: #b7bcc4; }
+      .faq-q { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; width: 100%; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+      .faq-q::after { content: "+"; color: #b7bcc4; font-weight: 600; }
+      .faq-q[aria-expanded="true"]::after { content: "\2013"; }
+      .copy-line { max-width: 1180px; margin: 0 auto; padding: 18px 16px 34px; border-top: 1px solid #26282d; font-size: .82rem; color: #9aa0a8; text-align: center; }
       .group { display: flex; flex-direction: column; gap: 10px; }
       .group > .glabel {
         font-family: "IBM Plex Mono", monospace;
@@ -783,6 +790,7 @@
       </section>
     </div>
 
+    <footer class="site-footer">
     <section class="make" aria-label="Personalise your paper">
       <h2 data-i18n="makeTitle">Make it yours</h2>
       <p data-i18n="makeBody">Most paper generators stop at the grid. Kami Print lets the paper carry you: your name stamped in any Google font, or your own logo in the corner. Printable paper with your name on it, notebook pages and worksheets that are recognisably yours. Your image is placed in your browser and never uploaded.</p>
@@ -790,26 +798,28 @@
     <section class="faq" aria-label="About Kami Print">
       <h2 data-i18n="faqTitle">Good to know</h2>
       <div class="faq-item">
-        <h3 data-i18n="faqQ1">Is Kami Print free?</h3>
-        <p data-i18n="faqA1">Yes. Every paper type and the PDF download are free, with no sign-up, no ads and no watermark.</p>
+        <h3><button type="button" class="faq-q" data-i18n="faqQ1" aria-expanded="true" aria-controls="faq-a1">Is Kami Print free?</button></h3>
+        <p data-i18n="faqA1" id="faq-a1">Yes. Every paper type and the PDF download are free, with no sign-up, no ads and no watermark.</p>
       </div>
       <div class="faq-item">
-        <h3 data-i18n="faqQ2">Is anything uploaded?</h3>
-        <p data-i18n="faqA2">No. Your paper is drawn in your browser and the PDF is created on your device. Settings are stored only in your browser, and an image you add never leaves your device.</p>
+        <h3><button type="button" class="faq-q" data-i18n="faqQ2" aria-expanded="false" aria-controls="faq-a2">Is anything uploaded?</button></h3>
+        <p data-i18n="faqA2" id="faq-a2" hidden>No. Your paper is drawn in your browser and the PDF is created on your device. Settings are stored only in your browser, and an image you add never leaves your device.</p>
       </div>
       <div class="faq-item">
-        <h3 data-i18n="faqQ3">How do I print at the exact size?</h3>
-        <p data-i18n="faqA3">In the print dialog, choose Actual size or 100 percent, not Fit to page. The millimetres then come out exact.</p>
+        <h3><button type="button" class="faq-q" data-i18n="faqQ3" aria-expanded="false" aria-controls="faq-a3">How do I print at the exact size?</button></h3>
+        <p data-i18n="faqA3" id="faq-a3" hidden>In the print dialog, choose Actual size or 100 percent, not Fit to page. The millimetres then come out exact.</p>
       </div>
       <div class="faq-item">
-        <h3 data-i18n="faqQ4">What can I make?</h3>
-        <p data-i18n="faqA4">Graph paper, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell notes, genkou youshi, a two-page rirekisho, monthly calendars with Japanese holidays, and planner refills in Bible and Mini 6 sizes with optional 6-hole guides.</p>
+        <h3><button type="button" class="faq-q" data-i18n="faqQ4" aria-expanded="false" aria-controls="faq-a4">What can I make?</button></h3>
+        <p data-i18n="faqA4" id="faq-a4" hidden>Graph paper, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell notes, genkou youshi, a two-page rirekisho, monthly calendars with Japanese holidays, and planner refills in Bible and Mini 6 sizes with optional 6-hole guides.</p>
       </div>
       <div class="faq-item">
-        <h3 data-i18n="faqQ5">How do I add my own logo or image?</h3>
-        <p data-i18n="faqA5">Upload it under Logo / image in the Your text panel. A transparent PNG blends into the paper; a white background prints like a clean stamp. Crop close to the artwork and use a file 600 px wide or more for a sharp print. The image stays on your device and is never uploaded.</p>
+        <h3><button type="button" class="faq-q" data-i18n="faqQ5" aria-expanded="false" aria-controls="faq-a5">How do I add my own logo or image?</button></h3>
+        <p data-i18n="faqA5" id="faq-a5" hidden>Upload it under Logo / image in the Your text panel. A transparent PNG blends into the paper; a white background prints like a clean stamp. Crop close to the artwork and use a file 600 px wide or more for a sharp print. The image stays on your device and is never uploaded.</p>
       </div>
     </section>
+      <div class="copy-line">&copy; <span id="copy-year">2026</span> kamiprint.com &middot; Made with love in Japan</div>
+    </footer>
 
     <script>
       (function () {
@@ -2060,6 +2070,17 @@
         applyLang();
       })();
     </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+  <script>
+      document.querySelectorAll(".faq-q").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var panel = document.getElementById(btn.getAttribute("aria-controls"));
+          var open = btn.getAttribute("aria-expanded") === "true";
+          btn.setAttribute("aria-expanded", String(!open));
+          if (panel) panel.hidden = open;
+        });
+      });
+      document.getElementById("copy-year").textContent = String(new Date().getFullYear());
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
   </body>
 </html>
