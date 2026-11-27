@@ -11,6 +11,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem("ppg-theme"); } catch (e) {}
+        if (t !== "light" && t !== "dark") {
+          t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
     <style>
       :root {
         --bg: #e9ebee;
@@ -45,6 +55,38 @@
           --paper-shadow: 0 2px 6px rgba(0, 0, 0, .5), 0 18px 44px rgba(0, 0, 0, .55);
           color-scheme: dark;
         }
+      }
+      :root[data-theme="light"] {
+        --bg: #e9ebee;
+        --panel: #ffffff;
+        --panel-2: #f4f5f7;
+        --ink: #171a1f;
+        --ink-2: #565d68;
+        --ink-3: #8a919c;
+        --line: #d7dae0;
+        --accent: #c2410c;
+        --accent-ink: #ffffff;
+        --accent-soft: #fdf0e9;
+        --desk: #dfe2e7;
+        --shadow: 0 1px 2px rgba(20, 24, 32, .06), 0 10px 30px rgba(20, 24, 32, .08);
+        --paper-shadow: 0 2px 6px rgba(20, 24, 32, .18), 0 18px 44px rgba(20, 24, 32, .22);
+        color-scheme: light;
+      }
+      :root[data-theme="dark"] {
+        --bg: #14161a;
+        --panel: #1e2126;
+        --panel-2: #262a30;
+        --ink: #eceef1;
+        --ink-2: #a7adb8;
+        --ink-3: #767e8a;
+        --line: #343941;
+        --accent: #f0662a;
+        --accent-ink: #ffffff;
+        --accent-soft: #33231b;
+        --desk: #101215;
+        --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .35);
+        --paper-shadow: 0 2px 6px rgba(0, 0, 0, .5), 0 18px 44px rgba(0, 0, 0, .55);
+        color-scheme: dark;
       }
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; }
@@ -99,6 +141,25 @@
         background: var(--accent-soft);
         color: var(--accent);
       }
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+      .theme-toggle {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        border-radius: 999px;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--ink-2);
+      }
+      .theme-toggle:hover { border-color: var(--ink-3); color: var(--ink); }
+      .theme-toggle svg { width: 16px; height: 16px; display: block; }
+      :root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+      :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
       .brand { text-align: center; margin: 8px 0 0; color: var(--ink); }
       .brand svg { width: 215px; max-width: 82%; height: auto; display: block; margin: 0 auto; }
       .panel h1 {
@@ -316,9 +377,15 @@
     <div class="layout">
       <!-- ======================= CONTROLS ======================= -->
       <section class="panel" aria-label="Paper settings">
-        <div class="lang-switch" role="group" aria-label="Language">
-          <button type="button" id="lang-en" aria-pressed="true">EN</button>
-          <button type="button" id="lang-ja" aria-pressed="false">日本語</button>
+        <div class="topbar">
+          <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark / light theme" title="Dark / light">
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          </button>
+          <div class="lang-switch" role="group" aria-label="Language">
+            <button type="button" id="lang-en" aria-pressed="true">EN</button>
+            <button type="button" id="lang-ja" aria-pressed="false">日本語</button>
+          </div>
         </div>
         <div class="brand"><svg class="brand-logo" viewBox="0 0 289.788 218.696" role="img" aria-label="Kami Print"><style>.brand-logo .cls-1{fill:#e9d7a5}.brand-logo .cls-2{fill:#ee9b00}.brand-logo .cls-3{fill:#bb3f03}.brand-logo .cls-4{fill:#ae2012}.brand-logo .cls-5{fill:#94d2bd}.brand-logo .cls-6{fill:#ca6702}.brand-logo .cls-7{fill:#0574c1}.brand-logo .cls-8{fill:#001219}.brand-logo .cls-9{fill:#f15a24}.brand-logo .cls-10{fill:#8cc63f}.brand-logo .cls-11{fill:#099396}</style><g xmlns="http://www.w3.org/2000/svg">
       <polygon points="43.416,173.039 204.217,169.96 118.921,84.791 41.499,170.486" class="cls-1" />
@@ -1683,6 +1750,11 @@
 
         $("lang-en").addEventListener("click", function () { setLang("en"); });
         $("lang-ja").addEventListener("click", function () { setLang("ja"); });
+        $("theme-toggle").addEventListener("click", function () {
+          var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          try { localStorage.setItem("ppg-theme", next); } catch (e) {}
+        });
 
         /* ---------- Settings persistence: autosave + shareable link ---------- */
         var PPG_KEYS = ["type", "size", "orient", "spacing", "margin", "weight", "color", "holes", "year", "month", "weekStart", "customText", "textFont", "textFontCustom", "textPos", "textSize", "logoPos", "logoWidth"];
