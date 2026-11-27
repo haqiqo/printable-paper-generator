@@ -504,6 +504,24 @@
             <p class="note" id="font-status" role="status"></p>
           </div>
           <div>
+            <label class="field-label" for="text-pos" data-i18n="textPosLabel">Position</label>
+            <select id="text-pos">
+              <option value="top-left" data-i18n="posTL">Top left</option>
+              <option value="top-center" data-i18n="posTC">Top centre</option>
+              <option value="top-right" data-i18n="posTR">Top right</option>
+              <option value="bottom-left" data-i18n="posBL">Bottom left</option>
+              <option value="bottom-center" data-i18n="posBC" selected>Bottom centre</option>
+              <option value="bottom-right" data-i18n="posBR">Bottom right</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="text-size"><span data-i18n="textSizeLabel">Text size</span> <span class="unit">mm</span></label>
+            <div class="slider-row">
+              <input type="range" id="text-size" min="2" max="8" step="0.5" value="4" />
+              <input type="number" id="text-size-num" min="2" max="8" step="0.5" value="4" />
+            </div>
+          </div>
+          <div>
             <label class="field-label" for="logo-file" data-i18n="logoLabel">Logo / image</label>
             <input type="file" id="logo-file" accept="image/*" />
             <p class="note" data-i18n="logoNote">Stays on your device — never uploaded.</p>
@@ -528,24 +546,6 @@
               </div>
             </div>
             <button type="button" class="btn" id="logo-remove" data-i18n="logoRemove">Remove logo</button>
-          </div>
-          <div>
-            <label class="field-label" for="text-pos" data-i18n="textPosLabel">Position</label>
-            <select id="text-pos">
-              <option value="top-left" data-i18n="posTL">Top left</option>
-              <option value="top-center" data-i18n="posTC">Top centre</option>
-              <option value="top-right" data-i18n="posTR">Top right</option>
-              <option value="bottom-left" data-i18n="posBL">Bottom left</option>
-              <option value="bottom-center" data-i18n="posBC" selected>Bottom centre</option>
-              <option value="bottom-right" data-i18n="posBR">Bottom right</option>
-            </select>
-          </div>
-          <div>
-            <label class="field-label" for="text-size"><span data-i18n="textSizeLabel">Text size</span> <span class="unit">mm</span></label>
-            <div class="slider-row">
-              <input type="range" id="text-size" min="2" max="8" step="0.5" value="4" />
-              <input type="number" id="text-size-num" min="2" max="8" step="0.5" value="4" />
-            </div>
           </div>
         </div>
 
