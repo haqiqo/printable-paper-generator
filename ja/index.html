@@ -189,6 +189,12 @@
         color: var(--ink-2);
       }
       .panel .sub { margin: 0; color: var(--ink-2); font-size: .9rem; line-height: 1.45; }
+      .panel .trust { margin: .55rem 0 0; font-size: .82rem; line-height: 1.55; color: var(--ink-2); }
+      .faq { max-width: 1180px; margin: 0 auto; padding: 4px 16px 48px; }
+      .faq h2 { font-size: 1.05rem; margin: 0 0 .9rem; }
+      .faq-item { margin: 0 0 1.05rem; }
+      .faq-item h3 { font-size: .92rem; margin: 0 0 .3rem; }
+      .faq-item p { margin: 0; font-size: .9rem; line-height: 1.6; color: var(--ink-2); max-width: 72ch; }
       .group { display: flex; flex-direction: column; gap: 10px; }
       .group > .glabel {
         font-family: "IBM Plex Mono", monospace;
@@ -412,6 +418,46 @@
       ]
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Kami Printは無料ですか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "はい。すべての用紙タイプとPDFダウンロードが無料です。登録不要、広告なし、透かしなしです。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "データがアップロードされることはありますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "いいえ。用紙はブラウザ内で描画され、PDFはお使いの端末で作成されます。設定はブラウザ内にのみ保存され、追加した画像が送信されることはありません。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "正確なサイズで印刷するには？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "印刷ダイアログで「ページに合わせる」ではなく「実際のサイズ」または100%を選んでください。ミリ単位の寸法がそのまま再現されます。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "何が作れますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "方眼紙、ドット、罫線、アイソメ、六角形、書写、五線譜、コーネル式ノート、原稿用紙、履歴書（2ページ）、日本の祝日入り月間カレンダー、手帳リフィル（バイブル・ミニ6、6穴ガイド対応）が作れます。"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div class="layout">
@@ -461,6 +507,7 @@
         <div>
           <h1 data-i18n="h1">Printable Paper Generator</h1>
           <p class="sub" data-i18n="sub">Set the exact sheet you need, spacing, margins, line weight, then stamp your name on it in any font you like. Personalise your paper and be proud of it: preview live, and download a print-ready PDF at true scale.</p>
+          <p class="trust" data-i18n="trustLine">Free · No sign-up · No ads · No watermark · Everything runs in your browser, nothing is uploaded</p>
         </div>
 
         <div class="group">
@@ -719,6 +766,26 @@
       </section>
     </div>
 
+    <section class="faq" aria-label="About Kami Print">
+      <h2 data-i18n="faqTitle">Good to know</h2>
+      <div class="faq-item">
+        <h3 data-i18n="faqQ1">Is Kami Print free?</h3>
+        <p data-i18n="faqA1">Yes. Every paper type and the PDF download are free, with no sign-up, no ads and no watermark.</p>
+      </div>
+      <div class="faq-item">
+        <h3 data-i18n="faqQ2">Is anything uploaded?</h3>
+        <p data-i18n="faqA2">No. Your paper is drawn in your browser and the PDF is created on your device. Settings are stored only in your browser, and an image you add never leaves your device.</p>
+      </div>
+      <div class="faq-item">
+        <h3 data-i18n="faqQ3">How do I print at the exact size?</h3>
+        <p data-i18n="faqA3">In the print dialog, choose Actual size or 100 percent, not Fit to page. The millimetres then come out exact.</p>
+      </div>
+      <div class="faq-item">
+        <h3 data-i18n="faqQ4">What can I make?</h3>
+        <p data-i18n="faqA4">Graph paper, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell notes, genkou youshi, a two-page rirekisho, monthly calendars with Japanese holidays, and planner refills in Bible and Mini 6 sizes with optional 6-hole guides.</p>
+      </div>
+    </section>
+
     <script>
       (function () {
         "use strict";
@@ -838,6 +905,16 @@
             metaDesc: "Free printable paper generator: graph, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell, genkou youshi, planner refills and a monthly calendar at exact millimetre scale. Personalise it with your name in any Google font, and download print-ready PDFs at 300 DPI.",
             h1: "Printable Paper Generator",
             sub: "Set the exact sheet you need, spacing, margins, line weight, then stamp your name on it in any font you like. Personalise your paper and be proud of it: preview live, and download a print-ready PDF at true scale.",
+            trustLine: "Free · No sign-up · No ads · No watermark · Everything runs in your browser, nothing is uploaded",
+            faqTitle: "Good to know",
+            faqQ1: "Is Kami Print free?",
+            faqA1: "Yes. Every paper type and the PDF download are free, with no sign-up, no ads and no watermark.",
+            faqQ2: "Is anything uploaded?",
+            faqA2: "No. Your paper is drawn in your browser and the PDF is created on your device. Settings are stored only in your browser, and an image you add never leaves your device.",
+            faqQ3: "How do I print at the exact size?",
+            faqA3: "In the print dialog, choose Actual size or 100 percent, not Fit to page. The millimetres then come out exact.",
+            faqQ4: "What can I make?",
+            faqA4: "Graph paper, dot grid, lined, isometric, hex, handwriting, sheet music, Cornell notes, genkou youshi, a two-page rirekisho, monthly calendars with Japanese holidays, and planner refills in Bible and Mini 6 sizes with optional 6-hole guides.",
             typeLabel: "Paper type", presets: "Presets", sheet: "Sheet",
             paperSize: "Paper size", orientation: "Orientation", portrait: "Portrait", landscape: "Landscape",
             margin: "Margin", weight: "Line weight", color: "Line colour", custom: "Custom", download: "Download PDF", shareLink: "Copy settings link", resetSettings: "Reset all settings", linkCopied: "Link copied. Anyone opening it sees this exact sheet setup.", linkInBar: "Your settings link is in the address bar. Copy it from there.", settingsReset: "Settings reset to the defaults.",
@@ -879,6 +956,16 @@
             metaDesc: "方眼紙・ドット・罫線・アイソメ・六角形・書写・五線譜・コーネル・原稿用紙・手帳リフィル・月間カレンダーを、正確なミリ単位で作成できる無料ツール。名前を好きなフォントで入れてカスタマイズ、300 DPIの印刷用PDFをダウンロード。",
             h1: "印刷用紙ジェネレーター",
             sub: "間隔・余白・線の太さを正確に設定して、自分の名前を好きなフォントで入れてカスタマイズ。プレビューで確認、そのまま印刷できるPDFをダウンロード。すべてブラウザの中で生成されます。",
+            trustLine: "無料・登録不要・広告なし・透かしなし・すべてブラウザ内で処理され、アップロードされません",
+            faqTitle: "ご利用について",
+            faqQ1: "Kami Printは無料ですか？",
+            faqA1: "はい。すべての用紙タイプとPDFダウンロードが無料です。登録不要、広告なし、透かしなしです。",
+            faqQ2: "データがアップロードされることはありますか？",
+            faqA2: "いいえ。用紙はブラウザ内で描画され、PDFはお使いの端末で作成されます。設定はブラウザ内にのみ保存され、追加した画像が送信されることはありません。",
+            faqQ3: "正確なサイズで印刷するには？",
+            faqA3: "印刷ダイアログで「ページに合わせる」ではなく「実際のサイズ」または100%を選んでください。ミリ単位の寸法がそのまま再現されます。",
+            faqQ4: "何が作れますか？",
+            faqA4: "方眼紙、ドット、罫線、アイソメ、六角形、書写、五線譜、コーネル式ノート、原稿用紙、履歴書（2ページ）、日本の祝日入り月間カレンダー、手帳リフィル（バイブル・ミニ6、6穴ガイド対応）が作れます。",
             typeLabel: "用紙の種類", presets: "プリセット", sheet: "用紙",
             paperSize: "用紙サイズ", orientation: "向き", portrait: "縦", landscape: "横",
             margin: "余白", weight: "線の太さ", color: "線の色", custom: "カスタム", download: "PDFをダウンロード", shareLink: "設定リンクをコピー", resetSettings: "設定をリセット", linkCopied: "リンクをコピーしました。開くと今の設定がそのまま再現されます。", linkInBar: "アドレスバーに設定リンクを表示しました。そこからコピーしてください。", settingsReset: "設定を初期状態に戻しました。",
